@@ -286,24 +286,260 @@ export default function TicketGenerator() {
     });
   };
 
-  const handleDownload = async () => {
-    if (!phoneRef.current) return;
-    const script = document.createElement("script");
-    script.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
-    script.onload = async () => {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const canvas = await (window as any).html2canvas(phoneRef.current, {
-        scale: 3,
-        backgroundColor: "#1c1c1e",
-        useCORS: true,
-      });
-      const link = document.createElement("a");
-      link.download = `bilet-${routeNumber}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
+  const handleDownload = () => {
+    if (!ticket) return;
+    const S = 3; // scale for retina
+    const W = 375 * S;
+    const H = 812 * S;
+    const canvas = document.createElement("canvas");
+    canvas.width = W;
+    canvas.height = H;
+    const c = canvas.getContext("2d")!;
+    c.scale(S, S);
+
+    const R = (r: number) => Math.min(r, 999);
+
+    // rounded rect helper
+    const rrect = (x: number, y: number, w: number, h: number, r: number) => {
+      c.beginPath();
+      c.moveTo(x + r, y);
+      c.lineTo(x + w - r, y);
+      c.arcTo(x + w, y, x + w, y + r, r);
+      c.lineTo(x + w, y + h - r);
+      c.arcTo(x + w, y + h, x + w - r, y + h, r);
+      c.lineTo(x + r, y + h);
+      c.arcTo(x, y + h, x, y + h - r, r);
+      c.lineTo(x, y + r);
+      c.arcTo(x, y, x + r, y, r);
+      c.closePath();
     };
-    document.head.appendChild(script);
+
+    // ── Phone shell ──
+    rrect(0, 0, 375, 812, 54);
+    c.fillStyle = "#1c1c1e";
+    c.fill();
+    c.save();
+    rrect(0, 0, 375, 812, 54);
+    c.clip();
+
+    // ── Status bar ──
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, 0, 375, 48);
+
+    // Time
+    c.fillStyle = "#ffffff";
+    c.font = "600 17px -apple-system, SF Pro Display, sans-serif";
+    c.fillText(ticket.time, 22, 32);
+
+    // Signal bars
+    const bx = 280;
+    const by = 20;
+    [[0,7,3,5],[4.5,5,3,7],[9,2,3,10],[13.5,0,3,12]].forEach(([x,y,w,h], i) => {
+      c.fillStyle = i === 3 ? "rgba(255,255,255,0.3)" : "#ffffff";
+      rrect(bx+x, by+y, w, h, 1);
+      c.fill();
+    });
+
+    // 4G
+    c.fillStyle = "#ffffff";
+    c.font = "600 13px -apple-system, sans-serif";
+    c.fillText("4G", bx + 20, by + 11);
+
+    // Battery shell
+    const batX = bx + 42, batY = by + 1;
+    c.strokeStyle = "rgba(255,255,255,0.55)";
+    c.lineWidth = 1.2;
+    rrect(batX, batY, 22, 11, 3);
+    c.stroke();
+    // Battery nub
+    c.fillStyle = "rgba(255,255,255,0.45)";
+    c.fillRect(batX + 22, batY + 3, 2, 5);
+    // Battery fill
+    c.fillStyle = "#ffffff";
+    rrect(batX + 1.5, batY + 1.5, 22 * 0.67 - 1.5, 8, 1.5);
+    c.fill();
+    // Battery number
+    c.fillStyle = "#ffffff";
+    c.font = "600 12px -apple-system, sans-serif";
+    c.fillText("67", batX + 25, batY + 10);
+
+    // ── Contact header ──
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, 48, 375, 90);
+    c.strokeStyle = "#38383a";
+    c.lineWidth = 0.5;
+    c.beginPath(); c.moveTo(0, 138); c.lineTo(375, 138); c.stroke();
+
+    // Back chevron
+    c.strokeStyle = "#007AFF";
+    c.lineWidth = 2.2;
+    c.lineCap = "round";
+    c.beginPath(); c.moveTo(22, 68); c.lineTo(14, 77); c.lineTo(22, 86); c.stroke();
+
+    // Badge 15
+    c.fillStyle = "#007AFF";
+    c.beginPath(); c.arc(36, 77, 11, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#ffffff";
+    c.font = "700 11px -apple-system, sans-serif";
+    c.textAlign = "center";
+    c.fillText("15", 36, 81);
+    c.textAlign = "left";
+
+    // Avatar circle
+    c.fillStyle = "#636366";
+    c.beginPath(); c.arc(187, 88, 30, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#c7c7cc";
+    c.beginPath(); c.arc(187, 82, 13, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(187, 110, 20, 14, 0, 0, Math.PI * 2); c.fill();
+
+    // Name 7000
+    c.fillStyle = "#ffffff";
+    c.font = "600 14px -apple-system, sans-serif";
+    c.textAlign = "center";
+    c.fillText("7000 ›", 187, 128);
+    c.textAlign = "left";
+
+    // ── Chat area ──
+    c.fillStyle = "#000000";
+    c.fillRect(0, 138, 375, 812 - 138 - 60 - 30);
+
+    // Timestamp
+    c.fillStyle = "#8e8e93";
+    c.font = "400 12px -apple-system, sans-serif";
+    c.textAlign = "center";
+    c.fillText("Text Message", 187, 165);
+    c.fillText("Today  " + ticket.time, 187, 181);
+    c.textAlign = "left";
+
+    // ── Sent bubble (green) ──
+    const sentText = routeNumber;
+    c.font = "600 17px -apple-system, sans-serif";
+    const sentW = c.measureText(sentText).width + 32;
+    const sentX = 375 - sentW - 8;
+    rrect(sentX, 190, sentW, 42, 20);
+    c.fillStyle = "#34c759";
+    c.fill();
+    // fix bottom right corner
+    c.fillRect(sentX + sentW - 20, 212, 20, 20);
+    rrect(sentX, 190, sentW, 42, 20);
+    c.fill();
+    c.fillStyle = "#ffffff";
+    c.font = "600 17px -apple-system, sans-serif";
+    c.fillText(sentText, sentX + 16, 216);
+
+    // ── Received bubble 1 ──
+    const b1text = "Solicitarea este in curs de procesare.";
+    c.font = "600 16px -apple-system, sans-serif";
+    const b1w = Math.min(c.measureText(b1text).width + 28, 280);
+    const b1lines = wrapText(c, b1text, b1w - 28);
+    const b1h = b1lines.length * 22 + 20;
+    rrect(8, 240, b1w, b1h, 18);
+    c.fillStyle = "#1c1c1e";
+    c.fill();
+    c.fillRect(8, 240 + b1h - 18, 18, 18);
+    rrect(8, 240, b1w, b1h, 18);
+    c.fill();
+    c.fillStyle = "#ffffff";
+    c.font = "600 16px -apple-system, sans-serif";
+    b1lines.forEach((line, i) => c.fillText(line, 22, 262 + i * 22));
+
+    // ── Received bubble 2 (ticket) ──
+    const b2y = 240 + b1h + 4;
+    const b2lines = [
+      "Bilet electronic nr. " + ticket.ticketNumber,
+      ticket.date,
+      "Valabil 1 ora (de la " + ticket.time + " pina la " + ticket.endTime + ")",
+      "Pret 6 MDL",
+      "Numar de bord " + routeNumber,
+    ];
+    c.font = "600 16px -apple-system, sans-serif";
+    const b2maxW = Math.max(...b2lines.map(l => c.measureText(l).width)) + 28;
+    const b2w = Math.min(b2maxW, 310);
+    const b2h = b2lines.length * 24 + 20;
+    rrect(8, b2y, b2w, b2h, 18);
+    c.fillStyle = "#1c1c1e";
+    c.fill();
+    c.fillRect(8, b2y + b2h - 18, 18, 18);
+    rrect(8, b2y, b2w, b2h, 18);
+    c.fill();
+
+    b2lines.forEach((line, i) => {
+      const y2 = b2y + 22 + i * 24;
+      if (i === 0) {
+        // "Bilet electronic nr. " in white, ticket number in blue underline
+        const prefix = "Bilet electronic nr. ";
+        c.fillStyle = "#ffffff";
+        c.font = "600 16px -apple-system, sans-serif";
+        c.fillText(prefix, 22, y2);
+        const prefixW = c.measureText(prefix).width;
+        const numStr = ticket.ticketNumber;
+        c.fillStyle = "#0a84ff";
+        c.fillText(numStr, 22 + prefixW, y2);
+        // underline
+        const numW = c.measureText(numStr).width;
+        c.fillRect(22 + prefixW, y2 + 2, numW, 1);
+      } else {
+        c.fillStyle = "#ffffff";
+        c.font = "600 16px -apple-system, sans-serif";
+        c.fillText(line, 22, y2);
+      }
+    });
+
+    // ── Input bar ──
+    const inputY = 812 - 60 - 30;
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, inputY, 375, 60);
+    c.strokeStyle = "#38383a";
+    c.lineWidth = 0.5;
+    c.beginPath(); c.moveTo(0, inputY); c.lineTo(375, inputY); c.stroke();
+
+    // Plus button
+    c.fillStyle = "#3a3a3c";
+    c.beginPath(); c.arc(28, inputY + 28, 16, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = "#ebebf5"; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(28, inputY + 21); c.lineTo(28, inputY + 35); c.stroke();
+    c.beginPath(); c.moveTo(21, inputY + 28); c.lineTo(35, inputY + 28); c.stroke();
+
+    // Input field
+    c.strokeStyle = "#48484a"; c.lineWidth = 0.5;
+    rrect(52, inputY + 10, 280, 36, 18);
+    c.stroke();
+    c.fillStyle = "#636366";
+    c.font = "400 16px -apple-system, sans-serif";
+    c.fillText("Text Message", 70, inputY + 33);
+
+    // ── Home indicator ──
+    const homeY = 812 - 30;
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, homeY, 375, 30);
+    c.fillStyle = "#ffffff";
+    rrect(375/2 - 67, homeY + 10, 134, 5, 3);
+    c.fill();
+
+    c.restore();
+
+    // Download
+    const link = document.createElement("a");
+    link.download = `bilet-${routeNumber}.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
   };
+
+  // Helper: wrap text to fit width
+  function wrapText(ctx: CanvasRenderingContext2D, text: string, maxW: number): string[] {
+    const words = text.split(" ");
+    const lines: string[] = [];
+    let cur = "";
+    for (const w of words) {
+      const test = cur ? cur + " " + w : w;
+      if (ctx.measureText(test).width > maxW && cur) {
+        lines.push(cur);
+        cur = w;
+      } else cur = test;
+    }
+    if (cur) lines.push(cur);
+    return lines;
+  }
 
   return (
     <div style={{
