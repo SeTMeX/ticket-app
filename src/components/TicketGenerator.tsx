@@ -1,5 +1,4 @@
 import { useState, useRef } from "react";
-import html2canvas from "html2canvas";
 
 interface Ticket {
   ticketNumber: string;
@@ -163,11 +162,25 @@ const HomeIndicator = () => (
   </div>
 );
 
+function wrapText(ctx: CanvasRenderingContext2D, text: string, maxW: number): string[] {
+  const words = text.split(" ");
+  const lines: string[] = [];
+  let cur = "";
+  for (const w of words) {
+    const test = cur ? cur + " " + w : w;
+    if (ctx.measureText(test).width > maxW && cur) {
+      lines.push(cur);
+      cur = w;
+    } else cur = test;
+  }
+  if (cur) lines.push(cur);
+  return lines;
+}
+
 export default function TicketGenerator() {
   const [routeNumber, setRouteNumber] = useState<string>("");
   const [ticket, setTicket] = useState<Ticket | null>(null);
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
-  const [capturing, setCapturing] = useState(false);
   const phoneRef = useRef<HTMLDivElement>(null);
 
   const handleGenerate = () => {
@@ -182,20 +195,171 @@ export default function TicketGenerator() {
     setGeneratedImageUrl(null);
   };
 
-  const handleGenerateImage = async () => {
-    if (!ticket || !phoneRef.current) return;
-    setCapturing(true);
-    try {
-      const canvas = await html2canvas(phoneRef.current, {
-        scale: 3,
-        useCORS: true,
-        backgroundColor: null,
-        logging: false,
-      });
-      setGeneratedImageUrl(canvas.toDataURL("image/png"));
-    } finally {
-      setCapturing(false);
-    }
+  const handleGenerateImage = () => {
+    if (!ticket) return;
+
+    const S = 3;
+    const canvas = document.createElement("canvas");
+    canvas.width = 375 * S;
+    canvas.height = 812 * S;
+    const c = canvas.getContext("2d")!;
+    c.scale(S, S);
+
+    const rrect = (x: number, y: number, w: number, h: number, r: number) => {
+      c.beginPath();
+      c.moveTo(x + r, y);
+      c.lineTo(x + w - r, y);
+      c.arcTo(x + w, y, x + w, y + r, r);
+      c.lineTo(x + w, y + h - r);
+      c.arcTo(x + w, y + h, x + w - r, y + h, r);
+      c.lineTo(x + r, y + h);
+      c.arcTo(x, y + h, x, y + h - r, r);
+      c.lineTo(x, y + r);
+      c.arcTo(x, y, x + r, y, r);
+      c.closePath();
+    };
+
+    rrect(0, 0, 375, 812, 54);
+    c.fillStyle = "#1c1c1e";
+    c.fill();
+    c.save();
+    rrect(0, 0, 375, 812, 54);
+    c.clip();
+
+    // ── Status bar (42px) ──
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, 0, 375, 42);
+    c.fillStyle = "#ffffff";
+    c.font = "600 17px -apple-system, sans-serif";
+    c.fillText(ticket.time, 22, 28);
+    const bx = 278, by = 15;
+    [[0,7,3,5],[4.5,5,3,7],[9,2,3,10],[13.5,0,3,12]].forEach(([x,y,w,h], i) => {
+      c.fillStyle = i === 3 ? "rgba(255,255,255,0.3)" : "#ffffff";
+      rrect(bx+x, by+y, w, h, 1); c.fill();
+    });
+    c.fillStyle = "#ffffff";
+    c.font = "600 13px -apple-system, sans-serif";
+    c.fillText("4G", bx + 20, 26);
+    const batX = bx + 40, batY = 16;
+    c.strokeStyle = "rgba(255,255,255,0.55)"; c.lineWidth = 1.2;
+    rrect(batX, batY, 22, 11, 3); c.stroke();
+    c.fillStyle = "rgba(255,255,255,0.45)";
+    c.fillRect(batX + 22, batY + 3, 2, 5);
+    c.fillStyle = "#ffffff";
+    rrect(batX + 1.5, batY + 1.5, 22 * 0.67 - 1.5, 8, 1.5); c.fill();
+    c.font = "600 12px -apple-system, sans-serif";
+    c.fillText("67", batX + 25, batY + 10);
+
+    // ── Contact header (42–138) ──
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, 42, 375, 96);
+    c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
+    c.beginPath(); c.moveTo(0, 138); c.lineTo(375, 138); c.stroke();
+    c.strokeStyle = "#007AFF"; c.lineWidth = 2.2; c.lineCap = "round";
+    c.beginPath(); c.moveTo(20, 48); c.lineTo(12, 57); c.lineTo(20, 66); c.stroke();
+    c.fillStyle = "#007AFF";
+    c.beginPath(); c.arc(34, 57, 11, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "700 11px -apple-system, sans-serif";
+    c.textAlign = "center"; c.fillText("15", 34, 61); c.textAlign = "left";
+    c.fillStyle = "#636366";
+    c.beginPath(); c.arc(187, 74, 30, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#c7c7cc";
+    c.beginPath(); c.arc(187, 66, 13, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(187, 102, 20, 14, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "600 14px -apple-system, sans-serif";
+    c.textAlign = "center"; c.fillText("7000 ›", 187, 121); c.textAlign = "left";
+
+    // ── Chat area (138–722) ──
+    c.fillStyle = "#000000";
+    c.fillRect(0, 138, 375, 812 - 138 - 60 - 30);
+    c.fillStyle = "#8e8e93"; c.font = "400 12px -apple-system, sans-serif";
+    c.textAlign = "center";
+    c.fillText("Text Message", 187, 165);
+    c.fillText("Today  " + ticket.time, 187, 183);
+    c.textAlign = "left";
+
+    const cy = 204;
+
+    // Green bubble
+    const sentText = routeNumber;
+    c.font = "600 17px -apple-system, sans-serif";
+    const sentW = c.measureText(sentText).width + 32;
+    const sentX = 375 - sentW - 8;
+    rrect(sentX, cy, sentW, 42, 20);
+    c.fillStyle = "#34c759"; c.fill();
+    c.fillRect(sentX + sentW - 20, cy + 22, 20, 20);
+    rrect(sentX, cy, sentW, 42, 20); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "600 17px -apple-system, sans-serif";
+    c.fillText(sentText, sentX + 16, cy + 24);
+
+    // Bubble 1
+    const b1y = cy + 42 + 4;
+    const b1text = "Solicitarea este in curs de procesare.";
+    c.font = "600 16px -apple-system, sans-serif";
+    const b1w = Math.min(c.measureText(b1text).width + 28, 308);
+    const b1lines = wrapText(c, b1text, b1w - 28);
+    const b1h = b1lines.length * 22 + 20;
+    rrect(8, b1y, b1w, b1h, 18); c.fillStyle = "#1c1c1e"; c.fill();
+    c.fillRect(8, b1y + b1h - 18, 18, 18);
+    rrect(8, b1y, b1w, b1h, 18); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+    b1lines.forEach((line, i) => c.fillText(line, 22, b1y + 23 + i * 22));
+
+    // Bubble 2
+    const b2y = b1y + b1h + 3;
+    const b2lines = [
+      "Bilet electronic nr. " + ticket.ticketNumber,
+      ticket.date,
+      "Valabil 1 ora (de la " + ticket.time + " pina la " + ticket.endTime + ")",
+      "Pret 6 MDL",
+      "Numar de bord " + routeNumber,
+    ];
+    c.font = "600 16px -apple-system, sans-serif";
+    const b2maxW = Math.max(...b2lines.map(l => c.measureText(l).width)) + 28;
+    const b2w = Math.min(b2maxW, 308);
+    const b2h = b2lines.length * 25 + 22;
+    rrect(8, b2y, b2w, b2h, 18); c.fillStyle = "#1c1c1e"; c.fill();
+    c.fillRect(8, b2y + b2h - 18, 18, 18);
+    rrect(8, b2y, b2w, b2h, 18); c.fill();
+    b2lines.forEach((line, i) => {
+      const ly = b2y + 24 + i * 25;
+      if (i === 0) {
+        const prefix = "Bilet electronic nr. ";
+        c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+        c.fillText(prefix, 22, ly);
+        const pw = c.measureText(prefix).width;
+        c.fillStyle = "#0a84ff";
+        c.fillText(ticket.ticketNumber, 22 + pw, ly);
+        c.fillRect(22 + pw, ly + 2, c.measureText(ticket.ticketNumber).width, 1);
+      } else {
+        c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+        c.fillText(line, 22, ly);
+      }
+    });
+
+    // ── Input bar ──
+    const inputY = 812 - 60 - 30;
+    c.fillStyle = "#1c1c1e"; c.fillRect(0, inputY, 375, 60);
+    c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
+    c.beginPath(); c.moveTo(0, inputY); c.lineTo(375, inputY); c.stroke();
+    c.fillStyle = "#3a3a3c";
+    c.beginPath(); c.arc(28, inputY + 28, 16, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = "#ebebf5"; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(28, inputY + 21); c.lineTo(28, inputY + 35); c.stroke();
+    c.beginPath(); c.moveTo(21, inputY + 28); c.lineTo(35, inputY + 28); c.stroke();
+    c.strokeStyle = "#48484a"; c.lineWidth = 0.5;
+    rrect(52, inputY + 10, 280, 36, 18); c.stroke();
+    c.fillStyle = "#636366"; c.font = "400 16px -apple-system, sans-serif";
+    c.fillText("Text Message", 70, inputY + 33);
+
+    // ── Home indicator ──
+    const homeY = 812 - 30;
+    c.fillStyle = "#1c1c1e"; c.fillRect(0, homeY, 375, 30);
+    c.fillStyle = "#ffffff";
+    rrect(375 / 2 - 67, homeY + 10, 134, 5, 3); c.fill();
+
+    c.restore();
+    setGeneratedImageUrl(canvas.toDataURL("image/png"));
   };
 
   return (
@@ -320,16 +484,15 @@ export default function TicketGenerator() {
             </button>
             <button
               onClick={handleGenerateImage}
-              disabled={capturing}
               style={{
                 padding: "11px 22px", borderRadius: "999px",
-                background: capturing ? "rgba(230,175,45,0.4)" : "linear-gradient(135deg, #e6af2d 0%, #d4711a 100%)",
+                background: "linear-gradient(135deg, #e6af2d 0%, #d4711a 100%)",
                 border: "none", color: "#07070d", fontSize: "14px", fontWeight: 700,
-                cursor: capturing ? "wait" : "pointer", fontFamily: "inherit",
+                cursor: "pointer", fontFamily: "inherit",
                 boxShadow: "0 4px 16px rgba(230,175,45,0.25)",
               }}
             >
-              {capturing ? "Se generează..." : "🖼 Salvează Imaginea"}
+              🖼 Salvează Imaginea
             </button>
           </div>
 
