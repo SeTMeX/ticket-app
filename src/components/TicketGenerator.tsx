@@ -37,9 +37,7 @@ const StatusBar = ({ time }: { time: string }) => (
     fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
   }}>
     <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
-      <span style={{ color: "#fff", fontSize: "17px", fontWeight: 600, letterSpacing: "-0.4px" }}>
-        {time}
-      </span>
+      <span style={{ color: "#fff", fontSize: "17px", fontWeight: 600, letterSpacing: "-0.4px" }}>{time}</span>
       <svg width="10" height="10" viewBox="0 0 24 24" fill="white">
         <path d="M2 12L22 2L12 22L10 13L2 12Z" />
       </svg>
@@ -168,10 +166,8 @@ function wrapText(ctx: CanvasRenderingContext2D, text: string, maxW: number): st
   let cur = "";
   for (const w of words) {
     const test = cur ? cur + " " + w : w;
-    if (ctx.measureText(test).width > maxW && cur) {
-      lines.push(cur);
-      cur = w;
-    } else cur = test;
+    if (ctx.measureText(test).width > maxW && cur) { lines.push(cur); cur = w; }
+    else cur = test;
   }
   if (cur) lines.push(cur);
   return lines;
@@ -199,79 +195,100 @@ export default function TicketGenerator() {
     if (!ticket) return;
 
     const S = 3;
+    const W = 375, H = 812;
     const canvas = document.createElement("canvas");
-    canvas.width = 375 * S;
-    canvas.height = 812 * S;
+    canvas.width = W * S;
+    canvas.height = H * S;
     const c = canvas.getContext("2d")!;
     c.scale(S, S);
 
     const rrect = (x: number, y: number, w: number, h: number, r: number) => {
       c.beginPath();
       c.moveTo(x + r, y);
-      c.lineTo(x + w - r, y);
-      c.arcTo(x + w, y, x + w, y + r, r);
-      c.lineTo(x + w, y + h - r);
-      c.arcTo(x + w, y + h, x + w - r, y + h, r);
-      c.lineTo(x + r, y + h);
-      c.arcTo(x, y + h, x, y + h - r, r);
-      c.lineTo(x, y + r);
-      c.arcTo(x, y, x + r, y, r);
+      c.arcTo(x + w, y, x + w, y + h, r);
+      c.arcTo(x + w, y + h, x, y + h, r);
+      c.arcTo(x, y + h, x, y, r);
+      c.arcTo(x, y, x + w, y, r);
       c.closePath();
     };
 
-    rrect(0, 0, 375, 812, 54);
-    c.fillStyle = "#1c1c1e";
-    c.fill();
-    c.save();
-    rrect(0, 0, 375, 812, 54);
-    c.clip();
+    const bubble = (x: number, y: number, w: number, h: number, tl: number, tr: number, br: number, bl: number) => {
+      c.beginPath();
+      c.moveTo(x + tl, y);
+      c.lineTo(x + w - tr, y);
+      c.arcTo(x + w, y, x + w, y + tr, tr);
+      c.lineTo(x + w, y + h - br);
+      c.arcTo(x + w, y + h, x + w - br, y + h, br);
+      c.lineTo(x + bl, y + h);
+      c.arcTo(x, y + h, x, y + h - bl, bl);
+      c.lineTo(x, y + tl);
+      c.arcTo(x, y, x + tl, y, tl);
+      c.closePath();
+    };
 
-    // ── Status bar (42px) ──
+    // Phone clip
+    rrect(0, 0, W, H, 54);
+    c.fillStyle = "#1c1c1e"; c.fill();
+    c.save();
+    rrect(0, 0, W, H, 54); c.clip();
+
+    // ── Status bar (0–42px) ──
     c.fillStyle = "#1c1c1e";
-    c.fillRect(0, 0, 375, 42);
-    c.fillStyle = "#ffffff";
+    c.fillRect(0, 0, W, 42);
+    c.fillStyle = "#fff";
     c.font = "600 17px -apple-system, sans-serif";
     c.fillText(ticket.time, 22, 28);
-    const bx = 278, by = 15;
-    [[0,7,3,5],[4.5,5,3,7],[9,2,3,10],[13.5,0,3,12]].forEach(([x,y,w,h], i) => {
-      c.fillStyle = i === 3 ? "rgba(255,255,255,0.3)" : "#ffffff";
-      rrect(bx+x, by+y, w, h, 1); c.fill();
+
+    const bx = 278, barBottom = 27;
+    [[0,5],[4.5,7],[9,10],[13.5,12]].forEach(([x, h], i) => {
+      c.fillStyle = i === 3 ? "rgba(255,255,255,0.3)" : "#fff";
+      rrect(bx + x, barBottom - h, 3, h, 1); c.fill();
     });
-    c.fillStyle = "#ffffff";
+    c.fillStyle = "#fff";
     c.font = "600 13px -apple-system, sans-serif";
     c.fillText("4G", bx + 20, 26);
+
     const batX = bx + 40, batY = 16;
     c.strokeStyle = "rgba(255,255,255,0.55)"; c.lineWidth = 1.2;
     rrect(batX, batY, 22, 11, 3); c.stroke();
     c.fillStyle = "rgba(255,255,255,0.45)";
     c.fillRect(batX + 22, batY + 3, 2, 5);
-    c.fillStyle = "#ffffff";
-    rrect(batX + 1.5, batY + 1.5, 22 * 0.67 - 1.5, 8, 1.5); c.fill();
+    c.fillStyle = "#fff";
+    rrect(batX + 1.5, batY + 1.5, 13.2, 8, 1.5); c.fill();
     c.font = "600 12px -apple-system, sans-serif";
     c.fillText("67", batX + 25, batY + 10);
 
-    // ── Contact header (42–138) ──
+    // ── Contact header (42–138px) ──
     c.fillStyle = "#1c1c1e";
-    c.fillRect(0, 42, 375, 96);
+    c.fillRect(0, 42, W, 96);
     c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
-    c.beginPath(); c.moveTo(0, 138); c.lineTo(375, 138); c.stroke();
+    c.beginPath(); c.moveTo(0, 138); c.lineTo(W, 138); c.stroke();
+
     c.strokeStyle = "#007AFF"; c.lineWidth = 2.2; c.lineCap = "round";
     c.beginPath(); c.moveTo(20, 48); c.lineTo(12, 57); c.lineTo(20, 66); c.stroke();
+
     c.fillStyle = "#007AFF";
     c.beginPath(); c.arc(34, 57, 11, 0, Math.PI * 2); c.fill();
-    c.fillStyle = "#ffffff"; c.font = "700 11px -apple-system, sans-serif";
+    c.fillStyle = "#fff"; c.font = "700 11px -apple-system, sans-serif";
     c.textAlign = "center"; c.fillText("15", 34, 61); c.textAlign = "left";
+
+    // Avatar — clip face+body to circle
     c.fillStyle = "#636366";
     c.beginPath(); c.arc(187, 74, 30, 0, Math.PI * 2); c.fill();
+    c.save();
+    c.beginPath(); c.arc(187, 74, 30, 0, Math.PI * 2); c.clip();
     c.fillStyle = "#c7c7cc";
     c.beginPath(); c.arc(187, 66, 13, 0, Math.PI * 2); c.fill();
-    c.beginPath(); c.ellipse(187, 102, 20, 14, 0, 0, Math.PI * 2); c.fill();
-    c.fillStyle = "#ffffff"; c.font = "600 14px -apple-system, sans-serif";
+    c.beginPath(); c.ellipse(187, 102, 23, 17, 0, 0, Math.PI * 2); c.fill();
+    c.restore();
+
+    c.fillStyle = "#fff"; c.font = "600 14px -apple-system, sans-serif";
     c.textAlign = "center"; c.fillText("7000 ›", 187, 121); c.textAlign = "left";
 
-    // ── Chat area (138–722) ──
-    c.fillStyle = "#000000";
-    c.fillRect(0, 138, 375, 812 - 138 - 60 - 30);
+    // ── Chat area (138–722px) ──
+    c.fillStyle = "#000";
+    c.fillRect(0, 138, W, H - 138 - 60 - 30);
+
     c.fillStyle = "#8e8e93"; c.font = "400 12px -apple-system, sans-serif";
     c.textAlign = "center";
     c.fillText("Text Message", 187, 165);
@@ -280,32 +297,28 @@ export default function TicketGenerator() {
 
     const cy = 204;
 
-    // Green bubble
-    const sentText = routeNumber;
+    // Green bubble — br=5px (pointed bottom-right)
     c.font = "600 17px -apple-system, sans-serif";
-    const sentW = c.measureText(sentText).width + 32;
-    const sentX = 375 - sentW - 8;
-    rrect(sentX, cy, sentW, 42, 20);
+    const sentW = c.measureText(routeNumber).width + 32;
+    const sentX = W - sentW - 8;
+    bubble(sentX, cy, sentW, 42, 20, 20, 5, 20);
     c.fillStyle = "#34c759"; c.fill();
-    c.fillRect(sentX + sentW - 20, cy + 22, 20, 20);
-    rrect(sentX, cy, sentW, 42, 20); c.fill();
-    c.fillStyle = "#ffffff"; c.font = "600 17px -apple-system, sans-serif";
-    c.fillText(sentText, sentX + 16, cy + 24);
+    c.fillStyle = "#fff"; c.font = "600 17px -apple-system, sans-serif";
+    c.fillText(routeNumber, sentX + 16, cy + 24);
 
-    // Bubble 1
+    // Bubble 1 — bl=5px (pointed bottom-left)
     const b1y = cy + 42 + 4;
     const b1text = "Solicitarea este in curs de procesare.";
     c.font = "600 16px -apple-system, sans-serif";
     const b1w = Math.min(c.measureText(b1text).width + 28, 308);
     const b1lines = wrapText(c, b1text, b1w - 28);
     const b1h = b1lines.length * 22 + 20;
-    rrect(8, b1y, b1w, b1h, 18); c.fillStyle = "#1c1c1e"; c.fill();
-    c.fillRect(8, b1y + b1h - 18, 18, 18);
-    rrect(8, b1y, b1w, b1h, 18); c.fill();
-    c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+    bubble(8, b1y, b1w, b1h, 18, 18, 18, 5);
+    c.fillStyle = "#1c1c1e"; c.fill();
+    c.fillStyle = "#fff"; c.font = "600 16px -apple-system, sans-serif";
     b1lines.forEach((line, i) => c.fillText(line, 22, b1y + 23 + i * 22));
 
-    // Bubble 2
+    // Bubble 2 — bl=5px (pointed bottom-left)
     const b2y = b1y + b1h + 3;
     const b2lines = [
       "Bilet electronic nr. " + ticket.ticketNumber,
@@ -315,36 +328,34 @@ export default function TicketGenerator() {
       "Numar de bord " + routeNumber,
     ];
     c.font = "600 16px -apple-system, sans-serif";
-    const b2maxW = Math.max(...b2lines.map(l => c.measureText(l).width)) + 28;
-    const b2w = Math.min(b2maxW, 308);
+    const b2w = Math.min(Math.max(...b2lines.map(l => c.measureText(l).width)) + 28, 308);
     const b2h = b2lines.length * 25 + 22;
-    rrect(8, b2y, b2w, b2h, 18); c.fillStyle = "#1c1c1e"; c.fill();
-    c.fillRect(8, b2y + b2h - 18, 18, 18);
-    rrect(8, b2y, b2w, b2h, 18); c.fill();
+    bubble(8, b2y, b2w, b2h, 18, 18, 18, 5);
+    c.fillStyle = "#1c1c1e"; c.fill();
     b2lines.forEach((line, i) => {
       const ly = b2y + 24 + i * 25;
       if (i === 0) {
         const prefix = "Bilet electronic nr. ";
-        c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+        c.fillStyle = "#fff"; c.font = "600 16px -apple-system, sans-serif";
         c.fillText(prefix, 22, ly);
         const pw = c.measureText(prefix).width;
         c.fillStyle = "#0a84ff";
         c.fillText(ticket.ticketNumber, 22 + pw, ly);
         c.fillRect(22 + pw, ly + 2, c.measureText(ticket.ticketNumber).width, 1);
       } else {
-        c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+        c.fillStyle = "#fff"; c.font = "600 16px -apple-system, sans-serif";
         c.fillText(line, 22, ly);
       }
     });
 
-    // ── Input bar ──
-    const inputY = 812 - 60 - 30;
-    c.fillStyle = "#1c1c1e"; c.fillRect(0, inputY, 375, 60);
+    // ── Input bar (722–782px) ──
+    const inputY = H - 60 - 30;
+    c.fillStyle = "#1c1c1e"; c.fillRect(0, inputY, W, 60);
     c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
-    c.beginPath(); c.moveTo(0, inputY); c.lineTo(375, inputY); c.stroke();
+    c.beginPath(); c.moveTo(0, inputY); c.lineTo(W, inputY); c.stroke();
     c.fillStyle = "#3a3a3c";
     c.beginPath(); c.arc(28, inputY + 28, 16, 0, Math.PI * 2); c.fill();
-    c.strokeStyle = "#ebebf5"; c.lineWidth = 2;
+    c.strokeStyle = "#ebebf5"; c.lineWidth = 2; c.lineCap = "round";
     c.beginPath(); c.moveTo(28, inputY + 21); c.lineTo(28, inputY + 35); c.stroke();
     c.beginPath(); c.moveTo(21, inputY + 28); c.lineTo(35, inputY + 28); c.stroke();
     c.strokeStyle = "#48484a"; c.lineWidth = 0.5;
@@ -352,11 +363,11 @@ export default function TicketGenerator() {
     c.fillStyle = "#636366"; c.font = "400 16px -apple-system, sans-serif";
     c.fillText("Text Message", 70, inputY + 33);
 
-    // ── Home indicator ──
-    const homeY = 812 - 30;
-    c.fillStyle = "#1c1c1e"; c.fillRect(0, homeY, 375, 30);
-    c.fillStyle = "#ffffff";
-    rrect(375 / 2 - 67, homeY + 10, 134, 5, 3); c.fill();
+    // ── Home indicator (782–812px) ──
+    const homeY = H - 30;
+    c.fillStyle = "#1c1c1e"; c.fillRect(0, homeY, W, 30);
+    c.fillStyle = "#fff";
+    rrect(W / 2 - 67, homeY + 10, 134, 5, 3); c.fill();
 
     c.restore();
     setGeneratedImageUrl(canvas.toDataURL("image/png"));
@@ -371,7 +382,6 @@ export default function TicketGenerator() {
       fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
       position: "relative", overflowX: "hidden",
     }}>
-
       <div style={{
         position: "fixed", top: "-80px", left: "50%", transform: "translateX(-50%)",
         width: "600px", height: "350px",
@@ -398,7 +408,6 @@ export default function TicketGenerator() {
             </span>
           </div>
         </div>
-
         <h1 style={{
           background: "linear-gradient(135deg, #f2c94c 0%, #e07b20 100%)",
           WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
@@ -409,7 +418,6 @@ export default function TicketGenerator() {
         <p style={{ color: "#38384a", fontSize: "12px", textAlign: "center", margin: "0 0 24px", letterSpacing: "0.03em" }}>
           Bilet electronic · 6 MDL · 1 oră valabil
         </p>
-
         <div style={{ marginBottom: "14px" }}>
           <label style={{
             color: "#5a5a72", fontSize: "10.5px", fontWeight: 700,
@@ -431,7 +439,6 @@ export default function TicketGenerator() {
             }}
           />
         </div>
-
         <button
           onClick={handleGenerate}
           style={{
@@ -443,7 +450,6 @@ export default function TicketGenerator() {
         >
           ✦ Generează Bilet
         </button>
-
         <div style={{ textAlign: "center", marginTop: "18px", paddingTop: "14px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
           <span style={{ color: "#282835", fontSize: "11px", fontWeight: 500, letterSpacing: "0.04em" }}>created by </span>
           <span style={{
