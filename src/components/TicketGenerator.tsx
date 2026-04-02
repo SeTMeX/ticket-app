@@ -29,7 +29,6 @@ function addHour(date: Date): Date {
   return d;
 }
 
-// ── Status Bar ──────────────────────────────────────────────────────────────
 const StatusBar = ({ time }: { time: string }) => (
   <div style={{
     backgroundColor: "#1c1c1e",
@@ -47,34 +46,23 @@ const StatusBar = ({ time }: { time: string }) => (
     </div>
     <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
       <svg width="17" height="12" viewBox="0 0 17 12" fill="none">
-        <rect x="0"    y="7" width="3" height="5"  rx="1" fill="white" />
-        <rect x="4.5"  y="5" width="3" height="7"  rx="1" fill="white" />
-        <rect x="9"    y="2" width="3" height="10" rx="1" fill="white" />
+        <rect x="0" y="7" width="3" height="5" rx="1" fill="white" />
+        <rect x="4.5" y="5" width="3" height="7" rx="1" fill="white" />
+        <rect x="9" y="2" width="3" height="10" rx="1" fill="white" />
         <rect x="13.5" y="0" width="3" height="12" rx="1" fill="rgba(255,255,255,0.3)" />
       </svg>
       <span style={{ color: "#fff", fontSize: "13px", fontWeight: 600 }}>4G</span>
-      {/* Battery — white fill ~67%, "67" text to the right */}
       <div style={{ display: "flex", alignItems: "center", gap: "4px" }}>
         <div style={{
-          position: "relative",
-          width: "22px", height: "11px",
-          border: "1.2px solid rgba(255,255,255,0.55)",
-          borderRadius: "3px",
-          padding: "1.5px",
-          boxSizing: "border-box",
-          display: "flex", alignItems: "center",
+          position: "relative", width: "22px", height: "11px",
+          border: "1.2px solid rgba(255,255,255,0.55)", borderRadius: "3px",
+          padding: "1.5px", boxSizing: "border-box", display: "flex", alignItems: "center",
         }}>
           <div style={{
             position: "absolute", right: "-3px", top: "50%", transform: "translateY(-50%)",
-            width: "2px", height: "5px",
-            backgroundColor: "rgba(255,255,255,0.45)",
-            borderRadius: "0 1.5px 1.5px 0",
+            width: "2px", height: "5px", backgroundColor: "rgba(255,255,255,0.45)", borderRadius: "0 1.5px 1.5px 0",
           }} />
-          <div style={{
-            width: "67%", height: "100%",
-            backgroundColor: "#fff",
-            borderRadius: "1.5px",
-          }} />
+          <div style={{ width: "67%", height: "100%", backgroundColor: "#fff", borderRadius: "1.5px" }} />
         </div>
         <span style={{ color: "#fff", fontSize: "12px", fontWeight: 600 }}>67</span>
       </div>
@@ -82,33 +70,24 @@ const StatusBar = ({ time }: { time: string }) => (
   </div>
 );
 
-// ── Contact Header ──────────────────────────────────────────────────────────
 const ContactHeader = () => (
   <div style={{
-    backgroundColor: "#1c1c1e",
-    display: "flex", flexDirection: "column", alignItems: "center",
-    paddingBottom: "12px", position: "relative",
-    borderBottom: "0.5px solid #38383a",
+    backgroundColor: "#1c1c1e", display: "flex", flexDirection: "column", alignItems: "center",
+    paddingBottom: "12px", position: "relative", borderBottom: "0.5px solid #38383a",
   }}>
-    <div style={{
-      position: "absolute", left: "10px", top: "4px",
-      display: "flex", alignItems: "center", gap: "1px",
-    }}>
+    <div style={{ position: "absolute", left: "10px", top: "4px", display: "flex", alignItems: "center", gap: "1px" }}>
       <svg width="12" height="22" viewBox="0 0 12 22" fill="none">
         <path d="M10 2L2 11L10 20" stroke="#007AFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       <div style={{
-        backgroundColor: "#007AFF", borderRadius: "50%",
-        width: "22px", height: "22px",
+        backgroundColor: "#007AFF", borderRadius: "50%", width: "22px", height: "22px",
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
         <span style={{ color: "#fff", fontSize: "11px", fontWeight: 700 }}>15</span>
       </div>
     </div>
-
     <div style={{
-      width: "60px", height: "60px", borderRadius: "50%",
-      backgroundColor: "#636366",
+      width: "60px", height: "60px", borderRadius: "50%", backgroundColor: "#636366",
       display: "flex", alignItems: "center", justifyContent: "center",
       overflow: "hidden", marginTop: "2px", marginBottom: "5px",
     }}>
@@ -117,12 +96,8 @@ const ContactHeader = () => (
         <ellipse cx="50" cy="96" rx="38" ry="28" fill="#c7c7cc" />
       </svg>
     </div>
-
     <div style={{ display: "flex", alignItems: "center", gap: "3px" }}>
-      <span style={{
-        color: "#fff", fontSize: "14px", fontWeight: 600,
-        fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
-      }}>7000</span>
+      <span style={{ color: "#fff", fontSize: "14px", fontWeight: 600, fontFamily: "-apple-system, 'SF Pro Text', sans-serif" }}>7000</span>
       <svg width="6" height="11" viewBox="0 0 6 11" fill="none">
         <path d="M1 1L5 5.5L1 10" stroke="#8e8e93" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -130,74 +105,24 @@ const ContactHeader = () => (
   </div>
 );
 
-// ── Chat Area ───────────────────────────────────────────────────────────────
 const ChatArea = ({ ticket, routeNumber }: { ticket: Ticket; routeNumber: string }) => (
-  <div style={{
-    backgroundColor: "#000",
-    flex: 1,
-    padding: "0 8px 12px",
-    display: "flex", flexDirection: "column",
-  }}>
-    <div style={{
-      textAlign: "center",
-      color: "#8e8e93",
-      fontSize: "12px",
-      fontWeight: 400,
-      lineHeight: "1.5",
-      margin: "14px 0 16px",
-      fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
-    }}>
+  <div style={{ backgroundColor: "#000", flex: 1, padding: "0 8px 12px", display: "flex", flexDirection: "column" }}>
+    <div style={{ textAlign: "center", color: "#8e8e93", fontSize: "12px", fontWeight: 400, lineHeight: "1.5", margin: "14px 0 16px", fontFamily: "-apple-system, 'SF Pro Text', sans-serif" }}>
       <div>Text Message</div>
       <div>Today &nbsp;{ticket.time}</div>
     </div>
-
     <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: "4px", paddingRight: "4px" }}>
-      <div style={{
-        backgroundColor: "#34c759",
-        color: "#fff",
-        padding: "10px 16px",
-        borderRadius: "20px",
-        borderBottomRightRadius: "5px",
-        fontSize: "17px",
-        fontWeight: 600,
-        fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
-        maxWidth: "70%",
-        lineHeight: "1.3",
-      }}>
+      <div style={{ backgroundColor: "#34c759", color: "#fff", padding: "10px 16px", borderRadius: "20px", borderBottomRightRadius: "5px", fontSize: "17px", fontWeight: 600, fontFamily: "-apple-system, 'SF Pro Text', sans-serif", maxWidth: "70%", lineHeight: "1.3" }}>
         {routeNumber}
       </div>
     </div>
-
     <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: "3px", paddingLeft: "4px" }}>
-      <div style={{
-        backgroundColor: "#1c1c1e",
-        color: "#fff",
-        padding: "10px 14px",
-        borderRadius: "20px",
-        borderBottomLeftRadius: "5px",
-        fontSize: "16px",
-        fontWeight: 600,
-        fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
-        maxWidth: "82%",
-        lineHeight: "1.4",
-      }}>
+      <div style={{ backgroundColor: "#1c1c1e", color: "#fff", padding: "10px 14px", borderRadius: "20px", borderBottomLeftRadius: "5px", fontSize: "16px", fontWeight: 600, fontFamily: "-apple-system, 'SF Pro Text', sans-serif", maxWidth: "82%", lineHeight: "1.4" }}>
         Solicitarea este in curs de procesare.
       </div>
     </div>
-
     <div style={{ display: "flex", justifyContent: "flex-start", paddingLeft: "4px" }}>
-      <div style={{
-        backgroundColor: "#1c1c1e",
-        color: "#fff",
-        padding: "11px 14px",
-        borderRadius: "20px",
-        borderBottomLeftRadius: "5px",
-        fontSize: "16px",
-        fontWeight: 600,
-        fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
-        maxWidth: "82%",
-        lineHeight: "1.55",
-      }}>
+      <div style={{ backgroundColor: "#1c1c1e", color: "#fff", padding: "11px 14px", borderRadius: "20px", borderBottomLeftRadius: "5px", fontSize: "16px", fontWeight: 600, fontFamily: "-apple-system, 'SF Pro Text', sans-serif", maxWidth: "82%", lineHeight: "1.55" }}>
         {"Bilet electronic nr. "}
         <span style={{ color: "#0a84ff", textDecoration: "underline", textDecorationColor: "#0a84ff" }}>
           {ticket.ticketNumber}
@@ -208,44 +133,20 @@ const ChatArea = ({ ticket, routeNumber }: { ticket: Ticket; routeNumber: string
         <br />{"Numar de bord " + routeNumber}
       </div>
     </div>
-
     <div style={{ flex: 1 }} />
   </div>
 );
 
-// ── Input Bar ───────────────────────────────────────────────────────────────
 const InputBar = () => (
-  <div style={{
-    backgroundColor: "#1c1c1e",
-    borderTop: "0.5px solid #38383a",
-    display: "flex", alignItems: "center",
-    padding: "8px 12px 12px",
-    gap: "10px",
-  }}>
-    <div style={{
-      width: "32px", height: "32px", borderRadius: "50%",
-      backgroundColor: "#3a3a3c",
-      display: "flex", alignItems: "center", justifyContent: "center",
-      flexShrink: 0,
-    }}>
+  <div style={{ backgroundColor: "#1c1c1e", borderTop: "0.5px solid #38383a", display: "flex", alignItems: "center", padding: "8px 12px 12px", gap: "10px" }}>
+    <div style={{ width: "32px", height: "32px", borderRadius: "50%", backgroundColor: "#3a3a3c", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
       <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
         <path d="M7 1V13M1 7H13" stroke="#ebebf5" strokeWidth="2" strokeLinecap="round" />
       </svg>
     </div>
-
-    <div style={{
-      flex: 1,
-      border: "0.5px solid #48484a",
-      borderRadius: "20px",
-      padding: "8px 14px",
-      color: "#636366",
-      fontSize: "16px",
-      fontFamily: "-apple-system, 'SF Pro Text', sans-serif",
-      backgroundColor: "transparent",
-    }}>
+    <div style={{ flex: 1, border: "0.5px solid #48484a", borderRadius: "20px", padding: "8px 14px", color: "#636366", fontSize: "16px", fontFamily: "-apple-system, 'SF Pro Text', sans-serif", backgroundColor: "transparent" }}>
       Text Message
     </div>
-
     <svg width="16" height="22" viewBox="0 0 17 22" fill="none" style={{ flexShrink: 0 }}>
       <rect x="4.5" y="0.5" width="8" height="13" rx="4" fill="#636366" />
       <path d="M1 9.5a7.5 7.5 0 0015 0" stroke="#636366" strokeWidth="1.8" strokeLinecap="round" fill="none" />
@@ -255,24 +156,16 @@ const InputBar = () => (
   </div>
 );
 
-// ── Home Indicator ──────────────────────────────────────────────────────────
 const HomeIndicator = () => (
-  <div style={{
-    backgroundColor: "#1c1c1e",
-    display: "flex", justifyContent: "center",
-    padding: "10px 0 20px",
-  }}>
-    <div style={{
-      width: "134px", height: "5px",
-      backgroundColor: "#fff", borderRadius: "3px",
-    }} />
+  <div style={{ backgroundColor: "#1c1c1e", display: "flex", justifyContent: "center", padding: "10px 0 20px" }}>
+    <div style={{ width: "134px", height: "5px", backgroundColor: "#fff", borderRadius: "3px" }} />
   </div>
 );
 
-// ── Main Component ──────────────────────────────────────────────────────────
 export default function TicketGenerator() {
   const [routeNumber, setRouteNumber] = useState<string>("");
   const [ticket, setTicket] = useState<Ticket | null>(null);
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const phoneRef = useRef<HTMLDivElement>(null);
 
   const handleGenerate = () => {
@@ -284,248 +177,9 @@ export default function TicketGenerator() {
       endTime: formatTime(addHour(now)),
       date: formatDate(now),
     });
+    setGeneratedImageUrl(null);
   };
 
-  const handleDownload = () => {
-    if (!ticket) return;
-    const S = 3; // scale for retina
-    const W = 375 * S;
-    const H = 812 * S;
-    const canvas = document.createElement("canvas");
-    canvas.width = W;
-    canvas.height = H;
-    const c = canvas.getContext("2d")!;
-    c.scale(S, S);
-
-    const R = (r: number) => Math.min(r, 999);
-
-    // rounded rect helper
-    const rrect = (x: number, y: number, w: number, h: number, r: number) => {
-      c.beginPath();
-      c.moveTo(x + r, y);
-      c.lineTo(x + w - r, y);
-      c.arcTo(x + w, y, x + w, y + r, r);
-      c.lineTo(x + w, y + h - r);
-      c.arcTo(x + w, y + h, x + w - r, y + h, r);
-      c.lineTo(x + r, y + h);
-      c.arcTo(x, y + h, x, y + h - r, r);
-      c.lineTo(x, y + r);
-      c.arcTo(x, y, x + r, y, r);
-      c.closePath();
-    };
-
-    // ── Phone shell ──
-    rrect(0, 0, 375, 812, 54);
-    c.fillStyle = "#1c1c1e";
-    c.fill();
-    c.save();
-    rrect(0, 0, 375, 812, 54);
-    c.clip();
-
-    // ── Status bar ──
-    c.fillStyle = "#1c1c1e";
-    c.fillRect(0, 0, 375, 48);
-
-    // Time
-    c.fillStyle = "#ffffff";
-    c.font = "600 17px -apple-system, SF Pro Display, sans-serif";
-    c.fillText(ticket.time, 22, 32);
-
-    // Signal bars
-    const bx = 280;
-    const by = 20;
-    [[0,7,3,5],[4.5,5,3,7],[9,2,3,10],[13.5,0,3,12]].forEach(([x,y,w,h], i) => {
-      c.fillStyle = i === 3 ? "rgba(255,255,255,0.3)" : "#ffffff";
-      rrect(bx+x, by+y, w, h, 1);
-      c.fill();
-    });
-
-    // 4G
-    c.fillStyle = "#ffffff";
-    c.font = "600 13px -apple-system, sans-serif";
-    c.fillText("4G", bx + 20, by + 11);
-
-    // Battery shell
-    const batX = bx + 42, batY = by + 1;
-    c.strokeStyle = "rgba(255,255,255,0.55)";
-    c.lineWidth = 1.2;
-    rrect(batX, batY, 22, 11, 3);
-    c.stroke();
-    // Battery nub
-    c.fillStyle = "rgba(255,255,255,0.45)";
-    c.fillRect(batX + 22, batY + 3, 2, 5);
-    // Battery fill
-    c.fillStyle = "#ffffff";
-    rrect(batX + 1.5, batY + 1.5, 22 * 0.67 - 1.5, 8, 1.5);
-    c.fill();
-    // Battery number
-    c.fillStyle = "#ffffff";
-    c.font = "600 12px -apple-system, sans-serif";
-    c.fillText("67", batX + 25, batY + 10);
-
-    // ── Contact header ──
-    c.fillStyle = "#1c1c1e";
-    c.fillRect(0, 48, 375, 90);
-    c.strokeStyle = "#38383a";
-    c.lineWidth = 0.5;
-    c.beginPath(); c.moveTo(0, 138); c.lineTo(375, 138); c.stroke();
-
-    // Back chevron
-    c.strokeStyle = "#007AFF";
-    c.lineWidth = 2.2;
-    c.lineCap = "round";
-    c.beginPath(); c.moveTo(22, 68); c.lineTo(14, 77); c.lineTo(22, 86); c.stroke();
-
-    // Badge 15
-    c.fillStyle = "#007AFF";
-    c.beginPath(); c.arc(36, 77, 11, 0, Math.PI * 2); c.fill();
-    c.fillStyle = "#ffffff";
-    c.font = "700 11px -apple-system, sans-serif";
-    c.textAlign = "center";
-    c.fillText("15", 36, 81);
-    c.textAlign = "left";
-
-    // Avatar circle
-    c.fillStyle = "#636366";
-    c.beginPath(); c.arc(187, 88, 30, 0, Math.PI * 2); c.fill();
-    c.fillStyle = "#c7c7cc";
-    c.beginPath(); c.arc(187, 82, 13, 0, Math.PI * 2); c.fill();
-    c.beginPath(); c.ellipse(187, 110, 20, 14, 0, 0, Math.PI * 2); c.fill();
-
-    // Name 7000
-    c.fillStyle = "#ffffff";
-    c.font = "600 14px -apple-system, sans-serif";
-    c.textAlign = "center";
-    c.fillText("7000 ›", 187, 128);
-    c.textAlign = "left";
-
-    // ── Chat area ──
-    c.fillStyle = "#000000";
-    c.fillRect(0, 138, 375, 812 - 138 - 60 - 30);
-
-    // Timestamp
-    c.fillStyle = "#8e8e93";
-    c.font = "400 12px -apple-system, sans-serif";
-    c.textAlign = "center";
-    c.fillText("Text Message", 187, 165);
-    c.fillText("Today  " + ticket.time, 187, 181);
-    c.textAlign = "left";
-
-    // ── Sent bubble (green) ──
-    const sentText = routeNumber;
-    c.font = "600 17px -apple-system, sans-serif";
-    const sentW = c.measureText(sentText).width + 32;
-    const sentX = 375 - sentW - 8;
-    rrect(sentX, 190, sentW, 42, 20);
-    c.fillStyle = "#34c759";
-    c.fill();
-    // fix bottom right corner
-    c.fillRect(sentX + sentW - 20, 212, 20, 20);
-    rrect(sentX, 190, sentW, 42, 20);
-    c.fill();
-    c.fillStyle = "#ffffff";
-    c.font = "600 17px -apple-system, sans-serif";
-    c.fillText(sentText, sentX + 16, 216);
-
-    // ── Received bubble 1 ──
-    const b1text = "Solicitarea este in curs de procesare.";
-    c.font = "600 16px -apple-system, sans-serif";
-    const b1w = Math.min(c.measureText(b1text).width + 28, 280);
-    const b1lines = wrapText(c, b1text, b1w - 28);
-    const b1h = b1lines.length * 22 + 20;
-    rrect(8, 240, b1w, b1h, 18);
-    c.fillStyle = "#1c1c1e";
-    c.fill();
-    c.fillRect(8, 240 + b1h - 18, 18, 18);
-    rrect(8, 240, b1w, b1h, 18);
-    c.fill();
-    c.fillStyle = "#ffffff";
-    c.font = "600 16px -apple-system, sans-serif";
-    b1lines.forEach((line, i) => c.fillText(line, 22, 262 + i * 22));
-
-    // ── Received bubble 2 (ticket) ──
-    const b2y = 240 + b1h + 4;
-    const b2lines = [
-      "Bilet electronic nr. " + ticket.ticketNumber,
-      ticket.date,
-      "Valabil 1 ora (de la " + ticket.time + " pina la " + ticket.endTime + ")",
-      "Pret 6 MDL",
-      "Numar de bord " + routeNumber,
-    ];
-    c.font = "600 16px -apple-system, sans-serif";
-    const b2maxW = Math.max(...b2lines.map(l => c.measureText(l).width)) + 28;
-    const b2w = Math.min(b2maxW, 310);
-    const b2h = b2lines.length * 24 + 20;
-    rrect(8, b2y, b2w, b2h, 18);
-    c.fillStyle = "#1c1c1e";
-    c.fill();
-    c.fillRect(8, b2y + b2h - 18, 18, 18);
-    rrect(8, b2y, b2w, b2h, 18);
-    c.fill();
-
-    b2lines.forEach((line, i) => {
-      const y2 = b2y + 22 + i * 24;
-      if (i === 0) {
-        // "Bilet electronic nr. " in white, ticket number in blue underline
-        const prefix = "Bilet electronic nr. ";
-        c.fillStyle = "#ffffff";
-        c.font = "600 16px -apple-system, sans-serif";
-        c.fillText(prefix, 22, y2);
-        const prefixW = c.measureText(prefix).width;
-        const numStr = ticket.ticketNumber;
-        c.fillStyle = "#0a84ff";
-        c.fillText(numStr, 22 + prefixW, y2);
-        // underline
-        const numW = c.measureText(numStr).width;
-        c.fillRect(22 + prefixW, y2 + 2, numW, 1);
-      } else {
-        c.fillStyle = "#ffffff";
-        c.font = "600 16px -apple-system, sans-serif";
-        c.fillText(line, 22, y2);
-      }
-    });
-
-    // ── Input bar ──
-    const inputY = 812 - 60 - 30;
-    c.fillStyle = "#1c1c1e";
-    c.fillRect(0, inputY, 375, 60);
-    c.strokeStyle = "#38383a";
-    c.lineWidth = 0.5;
-    c.beginPath(); c.moveTo(0, inputY); c.lineTo(375, inputY); c.stroke();
-
-    // Plus button
-    c.fillStyle = "#3a3a3c";
-    c.beginPath(); c.arc(28, inputY + 28, 16, 0, Math.PI * 2); c.fill();
-    c.strokeStyle = "#ebebf5"; c.lineWidth = 2;
-    c.beginPath(); c.moveTo(28, inputY + 21); c.lineTo(28, inputY + 35); c.stroke();
-    c.beginPath(); c.moveTo(21, inputY + 28); c.lineTo(35, inputY + 28); c.stroke();
-
-    // Input field
-    c.strokeStyle = "#48484a"; c.lineWidth = 0.5;
-    rrect(52, inputY + 10, 280, 36, 18);
-    c.stroke();
-    c.fillStyle = "#636366";
-    c.font = "400 16px -apple-system, sans-serif";
-    c.fillText("Text Message", 70, inputY + 33);
-
-    // ── Home indicator ──
-    const homeY = 812 - 30;
-    c.fillStyle = "#1c1c1e";
-    c.fillRect(0, homeY, 375, 30);
-    c.fillStyle = "#ffffff";
-    rrect(375/2 - 67, homeY + 10, 134, 5, 3);
-    c.fill();
-
-    c.restore();
-
-    // Download
-    const link = document.createElement("a");
-    link.download = `bilet-${routeNumber}.png`;
-    link.href = canvas.toDataURL("image/png");
-    link.click();
-  };
-
-  // Helper: wrap text to fit width
   function wrapText(ctx: CanvasRenderingContext2D, text: string, maxW: number): string[] {
     const words = text.split(" ");
     const lines: string[] = [];
@@ -541,6 +195,172 @@ export default function TicketGenerator() {
     return lines;
   }
 
+  const handleGenerateImage = () => {
+    if (!ticket) return;
+    const S = 3;
+    const canvas = document.createElement("canvas");
+    canvas.width = 375 * S;
+    canvas.height = 812 * S;
+    const c = canvas.getContext("2d")!;
+    c.scale(S, S);
+
+    const rrect = (x: number, y: number, w: number, h: number, r: number) => {
+      c.beginPath();
+      c.moveTo(x + r, y);
+      c.lineTo(x + w - r, y);
+      c.arcTo(x + w, y, x + w, y + r, r);
+      c.lineTo(x + w, y + h - r);
+      c.arcTo(x + w, y + h, x + w - r, y + h, r);
+      c.lineTo(x + r, y + h);
+      c.arcTo(x, y + h, x, y + h - r, r);
+      c.lineTo(x, y + r);
+      c.arcTo(x, y, x + r, y, r);
+      c.closePath();
+    };
+
+    rrect(0, 0, 375, 812, 54);
+    c.fillStyle = "#1c1c1e";
+    c.fill();
+    c.save();
+    rrect(0, 0, 375, 812, 54);
+    c.clip();
+
+    // Status bar
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, 0, 375, 48);
+    c.fillStyle = "#ffffff";
+    c.font = "600 17px -apple-system, SF Pro Display, sans-serif";
+    c.fillText(ticket.time, 22, 32);
+
+    const bx = 280, by = 20;
+    [[0,7,3,5],[4.5,5,3,7],[9,2,3,10],[13.5,0,3,12]].forEach(([x,y,w,h], i) => {
+      c.fillStyle = i === 3 ? "rgba(255,255,255,0.3)" : "#ffffff";
+      rrect(bx+x, by+y, w, h, 1); c.fill();
+    });
+    c.fillStyle = "#ffffff";
+    c.font = "600 13px -apple-system, sans-serif";
+    c.fillText("4G", bx + 20, by + 11);
+
+    const batX = bx + 42, batY = by + 1;
+    c.strokeStyle = "rgba(255,255,255,0.55)"; c.lineWidth = 1.2;
+    rrect(batX, batY, 22, 11, 3); c.stroke();
+    c.fillStyle = "rgba(255,255,255,0.45)";
+    c.fillRect(batX + 22, batY + 3, 2, 5);
+    c.fillStyle = "#ffffff";
+    rrect(batX + 1.5, batY + 1.5, 22 * 0.67 - 1.5, 8, 1.5); c.fill();
+    c.font = "600 12px -apple-system, sans-serif";
+    c.fillText("67", batX + 25, batY + 10);
+
+    // Contact header
+    c.fillStyle = "#1c1c1e";
+    c.fillRect(0, 48, 375, 90);
+    c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
+    c.beginPath(); c.moveTo(0, 138); c.lineTo(375, 138); c.stroke();
+    c.strokeStyle = "#007AFF"; c.lineWidth = 2.2; c.lineCap = "round";
+    c.beginPath(); c.moveTo(22, 68); c.lineTo(14, 77); c.lineTo(22, 86); c.stroke();
+    c.fillStyle = "#007AFF";
+    c.beginPath(); c.arc(36, 77, 11, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "700 11px -apple-system, sans-serif";
+    c.textAlign = "center"; c.fillText("15", 36, 81); c.textAlign = "left";
+    c.fillStyle = "#636366";
+    c.beginPath(); c.arc(187, 88, 30, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#c7c7cc";
+    c.beginPath(); c.arc(187, 82, 13, 0, Math.PI * 2); c.fill();
+    c.beginPath(); c.ellipse(187, 110, 20, 14, 0, 0, Math.PI * 2); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "600 14px -apple-system, sans-serif";
+    c.textAlign = "center"; c.fillText("7000 ›", 187, 128); c.textAlign = "left";
+
+    // Chat area
+    c.fillStyle = "#000000";
+    c.fillRect(0, 138, 375, 812 - 138 - 60 - 30);
+    c.fillStyle = "#8e8e93"; c.font = "400 12px -apple-system, sans-serif";
+    c.textAlign = "center";
+    c.fillText("Text Message", 187, 165);
+    c.fillText("Today  " + ticket.time, 187, 181);
+    c.textAlign = "left";
+
+    // Sent bubble
+    const sentText = routeNumber;
+    c.font = "600 17px -apple-system, sans-serif";
+    const sentW = c.measureText(sentText).width + 32;
+    const sentX = 375 - sentW - 8;
+    rrect(sentX, 190, sentW, 42, 20);
+    c.fillStyle = "#34c759"; c.fill();
+    c.fillRect(sentX + sentW - 20, 212, 20, 20);
+    rrect(sentX, 190, sentW, 42, 20); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "600 17px -apple-system, sans-serif";
+    c.fillText(sentText, sentX + 16, 216);
+
+    // Bubble 1
+    const b1text = "Solicitarea este in curs de procesare.";
+    c.font = "600 16px -apple-system, sans-serif";
+    const b1w = Math.min(c.measureText(b1text).width + 28, 280);
+    const b1lines = wrapText(c, b1text, b1w - 28);
+    const b1h = b1lines.length * 22 + 20;
+    rrect(8, 240, b1w, b1h, 18); c.fillStyle = "#1c1c1e"; c.fill();
+    c.fillRect(8, 240 + b1h - 18, 18, 18);
+    rrect(8, 240, b1w, b1h, 18); c.fill();
+    c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+    b1lines.forEach((line, i) => c.fillText(line, 22, 262 + i * 22));
+
+    // Bubble 2 (ticket)
+    const b2y = 240 + b1h + 4;
+    const b2lines = [
+      "Bilet electronic nr. " + ticket.ticketNumber,
+      ticket.date,
+      "Valabil 1 ora (de la " + ticket.time + " pina la " + ticket.endTime + ")",
+      "Pret 6 MDL",
+      "Numar de bord " + routeNumber,
+    ];
+    c.font = "600 16px -apple-system, sans-serif";
+    const b2maxW = Math.max(...b2lines.map(l => c.measureText(l).width)) + 28;
+    const b2w = Math.min(b2maxW, 310);
+    const b2h = b2lines.length * 24 + 20;
+    rrect(8, b2y, b2w, b2h, 18); c.fillStyle = "#1c1c1e"; c.fill();
+    c.fillRect(8, b2y + b2h - 18, 18, 18);
+    rrect(8, b2y, b2w, b2h, 18); c.fill();
+    b2lines.forEach((line, i) => {
+      const y2 = b2y + 22 + i * 24;
+      if (i === 0) {
+        const prefix = "Bilet electronic nr. ";
+        c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+        c.fillText(prefix, 22, y2);
+        const prefixW = c.measureText(prefix).width;
+        c.fillStyle = "#0a84ff";
+        c.fillText(ticket.ticketNumber, 22 + prefixW, y2);
+        c.fillRect(22 + prefixW, y2 + 2, c.measureText(ticket.ticketNumber).width, 1);
+      } else {
+        c.fillStyle = "#ffffff"; c.font = "600 16px -apple-system, sans-serif";
+        c.fillText(line, 22, y2);
+      }
+    });
+
+    // Input bar
+    const inputY = 812 - 60 - 30;
+    c.fillStyle = "#1c1c1e"; c.fillRect(0, inputY, 375, 60);
+    c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
+    c.beginPath(); c.moveTo(0, inputY); c.lineTo(375, inputY); c.stroke();
+    c.fillStyle = "#3a3a3c";
+    c.beginPath(); c.arc(28, inputY + 28, 16, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = "#ebebf5"; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(28, inputY + 21); c.lineTo(28, inputY + 35); c.stroke();
+    c.beginPath(); c.moveTo(21, inputY + 28); c.lineTo(35, inputY + 28); c.stroke();
+    c.strokeStyle = "#48484a"; c.lineWidth = 0.5;
+    rrect(52, inputY + 10, 280, 36, 18); c.stroke();
+    c.fillStyle = "#636366"; c.font = "400 16px -apple-system, sans-serif";
+    c.fillText("Text Message", 70, inputY + 33);
+
+    // Home indicator
+    const homeY = 812 - 30;
+    c.fillStyle = "#1c1c1e"; c.fillRect(0, homeY, 375, 30);
+    c.fillStyle = "#ffffff";
+    rrect(375/2 - 67, homeY + 10, 134, 5, 3); c.fill();
+
+    c.restore();
+
+    setGeneratedImageUrl(canvas.toDataURL("image/png"));
+  };
+
   return (
     <div style={{
       minHeight: "100svh",
@@ -548,11 +368,9 @@ export default function TicketGenerator() {
       display: "flex", flexDirection: "column", alignItems: "center",
       padding: "32px 16px 48px",
       fontFamily: "'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif",
-      position: "relative",
-      overflowX: "hidden",
+      position: "relative", overflowX: "hidden",
     }}>
 
-      {/* Ambient glow top */}
       <div style={{
         position: "fixed", top: "-80px", left: "50%", transform: "translateX(-50%)",
         width: "600px", height: "350px",
@@ -560,25 +378,19 @@ export default function TicketGenerator() {
         pointerEvents: "none", zIndex: 0,
       }} />
 
-      {/* ── Form card ── */}
+      {/* Form card */}
       <div style={{
         width: "100%", maxWidth: "375px",
         background: "linear-gradient(155deg, #14131f 0%, #0e0d18 100%)",
-        borderRadius: "26px",
-        border: "1px solid rgba(230,175,45,0.12)",
-        padding: "28px 24px 22px",
-        marginBottom: "28px",
-        boxSizing: "border-box",
+        borderRadius: "26px", border: "1px solid rgba(230,175,45,0.12)",
+        padding: "28px 24px 22px", marginBottom: "28px", boxSizing: "border-box",
         boxShadow: "0 32px 80px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.03), inset 0 1px 0 rgba(255,255,255,0.05)",
         position: "relative", zIndex: 1,
       }}>
-
-        {/* Badge */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: "16px" }}>
           <div style={{
             display: "inline-flex", alignItems: "center", gap: "6px",
-            background: "rgba(230,175,45,0.08)",
-            border: "1px solid rgba(230,175,45,0.18)",
+            background: "rgba(230,175,45,0.08)", border: "1px solid rgba(230,175,45,0.18)",
             borderRadius: "999px", padding: "4px 12px",
           }}>
             <span style={{ fontSize: "10px", color: "#c9952a", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>
@@ -587,31 +399,21 @@ export default function TicketGenerator() {
           </div>
         </div>
 
-        {/* Title */}
         <h1 style={{
           background: "linear-gradient(135deg, #f2c94c 0%, #e07b20 100%)",
-          WebkitBackgroundClip: "text",
-          WebkitTextFillColor: "transparent",
-          fontSize: "27px", fontWeight: 800,
-          textAlign: "center", margin: "0 0 6px",
-          letterSpacing: "-0.6px",
+          WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+          fontSize: "27px", fontWeight: 800, textAlign: "center", margin: "0 0 6px", letterSpacing: "-0.6px",
         }}>
           Generate Your Ride
         </h1>
-        <p style={{
-          color: "#38384a", fontSize: "12px",
-          textAlign: "center", margin: "0 0 24px",
-          letterSpacing: "0.03em",
-        }}>
+        <p style={{ color: "#38384a", fontSize: "12px", textAlign: "center", margin: "0 0 24px", letterSpacing: "0.03em" }}>
           Bilet electronic · 6 MDL · 1 oră valabil
         </p>
 
-        {/* Input */}
         <div style={{ marginBottom: "14px" }}>
           <label style={{
             color: "#5a5a72", fontSize: "10.5px", fontWeight: 700,
-            letterSpacing: "0.1em", textTransform: "uppercase",
-            display: "block", marginBottom: "8px",
+            letterSpacing: "0.1em", textTransform: "uppercase", display: "block", marginBottom: "8px",
           }}>
             Număr Rută / Vehicul
           </label>
@@ -622,72 +424,47 @@ export default function TicketGenerator() {
             onChange={(e) => setRouteNumber(e.target.value)}
             placeholder="ex: 1335"
             style={{
-              width: "100%",
-              background: "rgba(255,255,255,0.03)",
-              color: "#e8e8f4",
-              border: "1px solid rgba(255,255,255,0.07)",
-              borderRadius: "13px", padding: "13px 16px",
-              fontSize: "16px", outline: "none", boxSizing: "border-box",
-              fontFamily: "inherit",
+              width: "100%", background: "rgba(255,255,255,0.03)", color: "#e8e8f4",
+              border: "1px solid rgba(255,255,255,0.07)", borderRadius: "13px",
+              padding: "13px 16px", fontSize: "16px", outline: "none",
+              boxSizing: "border-box", fontFamily: "inherit",
             }}
           />
         </div>
 
-        {/* Button */}
         <button
           onClick={handleGenerate}
           style={{
-            width: "100%",
-            background: "linear-gradient(135deg, #e6af2d 0%, #d4711a 100%)",
-            color: "#07070d",
-            border: "none", borderRadius: "14px", padding: "14px",
-            fontSize: "15px", fontWeight: 800, cursor: "pointer",
-            letterSpacing: "0.01em",
+            width: "100%", background: "linear-gradient(135deg, #e6af2d 0%, #d4711a 100%)",
+            color: "#07070d", border: "none", borderRadius: "14px", padding: "14px",
+            fontSize: "15px", fontWeight: 800, cursor: "pointer", letterSpacing: "0.01em",
             boxShadow: "0 6px 24px rgba(230,175,45,0.28), inset 0 1px 0 rgba(255,255,255,0.15)",
           }}
         >
           ✦ Generează Bilet
         </button>
 
-        {/* SeTMeX credit */}
-        <div style={{
-          textAlign: "center", marginTop: "18px",
-          paddingTop: "14px",
-          borderTop: "1px solid rgba(255,255,255,0.04)",
-        }}>
-          <span style={{ color: "#282835", fontSize: "11px", fontWeight: 500, letterSpacing: "0.04em" }}>
-            created by{" "}
-          </span>
+        <div style={{ textAlign: "center", marginTop: "18px", paddingTop: "14px", borderTop: "1px solid rgba(255,255,255,0.04)" }}>
+          <span style={{ color: "#282835", fontSize: "11px", fontWeight: 500, letterSpacing: "0.04em" }}>created by </span>
           <span style={{
             background: "linear-gradient(135deg, #e6af2d, #d4711a)",
-            WebkitBackgroundClip: "text",
-            WebkitTextFillColor: "transparent",
+            WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
             fontSize: "11px", fontWeight: 800, letterSpacing: "0.12em",
-          }}>
-            SeTMeX
-          </span>
+          }}>SeTMeX</span>
         </div>
       </div>
 
-      {/* ── iPhone Mockup ── */}
+      {/* Phone mockup + buttons */}
       {ticket && (
         <div style={{
           display: "flex", flexDirection: "column", alignItems: "center",
-          gap: "20px", width: "100%", maxWidth: "375px",
-          position: "relative", zIndex: 1,
+          gap: "20px", width: "100%", maxWidth: "375px", position: "relative", zIndex: 1,
         }}>
-          <div
-            ref={phoneRef}
-            style={{
-              width: "375px",
-              height: "812px",
-              backgroundColor: "#1c1c1e",
-              borderRadius: "54px",
-              overflow: "hidden",
-              border: "1px solid #2a2a2a",
-              display: "flex", flexDirection: "column",
-            }}
-          >
+          <div ref={phoneRef} style={{
+            width: "375px", height: "812px", backgroundColor: "#1c1c1e",
+            borderRadius: "54px", overflow: "hidden", border: "1px solid #2a2a2a",
+            display: "flex", flexDirection: "column",
+          }}>
             <StatusBar time={ticket.time} />
             <ContactHeader />
             <ChatArea ticket={ticket} routeNumber={routeNumber} />
@@ -700,28 +477,46 @@ export default function TicketGenerator() {
               onClick={handleGenerate}
               style={{
                 padding: "11px 22px", borderRadius: "999px",
-                background: "rgba(255,255,255,0.05)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                color: "#aaaacc", fontSize: "14px", cursor: "pointer",
-                fontFamily: "inherit",
+                background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)",
+                color: "#aaaacc", fontSize: "14px", cursor: "pointer", fontFamily: "inherit",
               }}
             >
               🔄 Regenerate
             </button>
             <button
-              onClick={handleDownload}
+              onClick={handleGenerateImage}
               style={{
                 padding: "11px 22px", borderRadius: "999px",
                 background: "linear-gradient(135deg, #e6af2d 0%, #d4711a 100%)",
-                border: "none",
-                color: "#07070d", fontSize: "14px", fontWeight: 700, cursor: "pointer",
-                fontFamily: "inherit",
+                border: "none", color: "#07070d", fontSize: "14px", fontWeight: 700,
+                cursor: "pointer", fontFamily: "inherit",
                 boxShadow: "0 4px 16px rgba(230,175,45,0.25)",
               }}
             >
-              ⬇ Download
+              🖼 Salvează Imaginea
             </button>
           </div>
+
+          {/* Imaginea generata — tine apasat pe ea pe iPhone pentru Save to Photos */}
+          {generatedImageUrl && (
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", width: "100%" }}>
+              <p style={{ color: "#5a5a72", fontSize: "12px", textAlign: "center", margin: 0, letterSpacing: "0.03em" }}>
+                Ține apăsat pe imagine și alege{" "}
+                <strong style={{ color: "#aaaacc" }}>"Adaugă la fotografii"</strong>
+              </p>
+              <img
+                src={generatedImageUrl}
+                alt="Bilet electronic"
+                style={{
+                  width: "375px",
+                  borderRadius: "54px",
+                  border: "1px solid #2a2a2a",
+                  display: "block",
+                  WebkitTouchCallout: "default",
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
