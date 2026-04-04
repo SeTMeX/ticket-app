@@ -189,11 +189,6 @@ export default function TicketGenerator() {
       date: formatDate(now),
     });
     setGeneratedImageUrl(null);
-    
-    // Auto-generate image immediately
-    setTimeout(() => {
-      handleGenerateImage();
-    }, 100);
   };
 
   const handleGenerateImage = () => {
@@ -532,7 +527,19 @@ export default function TicketGenerator() {
                 color: "#aaaacc", fontSize: "14px", cursor: "pointer", fontFamily: "inherit",
               }}
             >
-              🔄 Generează Alt Bilet
+              🔄 Regenerate
+            </button>
+            <button
+              onClick={handleGenerateImage}
+              style={{
+                padding: "11px 22px", borderRadius: "999px",
+                background: "linear-gradient(135deg, #e6af2d 0%, #d4711a 100%)",
+                border: "none", color: "#07070d", fontSize: "14px", fontWeight: 700,
+                cursor: "pointer", fontFamily: "inherit",
+                boxShadow: "0 4px 16px rgba(230,175,45,0.25)",
+              }}
+            >
+              🖼 Salvează Imaginea
             </button>
           </div>
 
