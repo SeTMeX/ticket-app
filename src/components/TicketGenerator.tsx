@@ -235,9 +235,22 @@ export default function TicketGenerator() {
     // ── Status bar (0–42px) ──
     c.fillStyle = "#1c1c1e";
     c.fillRect(0, 0, W, 42);
+    
+    // Time with location arrow
     c.fillStyle = "#fff";
     c.font = "600 17px -apple-system, sans-serif";
     c.fillText(ticket.time, 22, 28);
+    
+    // Location arrow
+    c.save();
+    c.translate(22 + c.measureText(ticket.time).width + 4, 28);
+    c.beginPath();
+    c.moveTo(0, -5);
+    c.lineTo(10, 0);
+    c.lineTo(0, 5);
+    c.closePath();
+    c.fill();
+    c.restore();
 
     const bx = 278, barBottom = 27;
     [[0,5],[4.5,7],[9,10],[13.5,12]].forEach(([x, h], i) => {
@@ -264,6 +277,7 @@ export default function TicketGenerator() {
     c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
     c.beginPath(); c.moveTo(0, 138); c.lineTo(W, 138); c.stroke();
 
+    // Back arrow and badge
     c.strokeStyle = "#007AFF"; c.lineWidth = 2.2; c.lineCap = "round";
     c.beginPath(); c.moveTo(20, 48); c.lineTo(12, 57); c.lineTo(20, 66); c.stroke();
 
@@ -272,7 +286,7 @@ export default function TicketGenerator() {
     c.fillStyle = "#fff"; c.font = "700 11px -apple-system, sans-serif";
     c.textAlign = "center"; c.fillText("15", 34, 61); c.textAlign = "left";
 
-    // Avatar — clip face+body to circle
+    // Avatar with proper positioning
     c.fillStyle = "#636366";
     c.beginPath(); c.arc(187, 74, 30, 0, Math.PI * 2); c.fill();
     c.save();
@@ -282,8 +296,16 @@ export default function TicketGenerator() {
     c.beginPath(); c.ellipse(187, 102, 23, 17, 0, 0, Math.PI * 2); c.fill();
     c.restore();
 
+    // Contact name with arrow
     c.fillStyle = "#fff"; c.font = "600 14px -apple-system, sans-serif";
-    c.textAlign = "center"; c.fillText("7000 ›", 187, 121); c.textAlign = "left";
+    c.textAlign = "center"; c.fillText("7000", 187, 121);
+    // Draw arrow
+    c.save();
+    c.translate(187 + c.measureText("7000").width / 2 + 3, 121);
+    c.strokeStyle = "#8e8e93"; c.lineWidth = 1.6; c.lineCap = "round";
+    c.beginPath(); c.moveTo(0, -4); c.lineTo(4, 0); c.lineTo(0, 4); c.stroke();
+    c.restore();
+    c.textAlign = "left";
 
     // ── Chat area (138–722px) ──
     c.fillStyle = "#000";
@@ -297,28 +319,28 @@ export default function TicketGenerator() {
 
     const cy = 204;
 
-    // Green bubble — br=5px (pointed bottom-right)
+    // Green bubble (sent message) - right aligned with pointed bottom-right
     c.font = "600 17px -apple-system, sans-serif";
     const sentW = c.measureText(routeNumber).width + 32;
-    const sentX = W - sentW - 8;
+    const sentX = W - sentW - 12; // Adjusted padding
     bubble(sentX, cy, sentW, 42, 20, 20, 5, 20);
     c.fillStyle = "#34c759"; c.fill();
     c.fillStyle = "#fff"; c.font = "600 17px -apple-system, sans-serif";
     c.fillText(routeNumber, sentX + 16, cy + 24);
 
-    // Bubble 1 — bl=5px (pointed bottom-left)
+    // First received bubble - left aligned with pointed bottom-left
     const b1y = cy + 42 + 4;
     const b1text = "Solicitarea este in curs de procesare.";
     c.font = "600 16px -apple-system, sans-serif";
     const b1w = Math.min(c.measureText(b1text).width + 28, 308);
     const b1lines = wrapText(c, b1text, b1w - 28);
     const b1h = b1lines.length * 22 + 20;
-    bubble(8, b1y, b1w, b1h, 18, 18, 18, 5);
+    bubble(12, b1y, b1w, b1h, 18, 18, 18, 5); // Adjusted x position
     c.fillStyle = "#1c1c1e"; c.fill();
     c.fillStyle = "#fff"; c.font = "600 16px -apple-system, sans-serif";
-    b1lines.forEach((line, i) => c.fillText(line, 22, b1y + 23 + i * 22));
+    b1lines.forEach((line, i) => c.fillText(line, 26, b1y + 23 + i * 22)); // Adjusted text position
 
-    // Bubble 2 — bl=5px (pointed bottom-left)
+    // Second received bubble - ticket details with underline
     const b2y = b1y + b1h + 3;
     const b2lines = [
       "Bilet electronic nr. " + ticket.ticketNumber,
@@ -330,21 +352,21 @@ export default function TicketGenerator() {
     c.font = "600 16px -apple-system, sans-serif";
     const b2w = Math.min(Math.max(...b2lines.map(l => c.measureText(l).width)) + 28, 308);
     const b2h = b2lines.length * 25 + 22;
-    bubble(8, b2y, b2w, b2h, 18, 18, 18, 5);
+    bubble(12, b2y, b2w, b2h, 18, 18, 18, 5); // Adjusted x position
     c.fillStyle = "#1c1c1e"; c.fill();
     b2lines.forEach((line, i) => {
       const ly = b2y + 24 + i * 25;
       if (i === 0) {
         const prefix = "Bilet electronic nr. ";
         c.fillStyle = "#fff"; c.font = "600 16px -apple-system, sans-serif";
-        c.fillText(prefix, 22, ly);
+        c.fillText(prefix, 26, ly); // Adjusted text position
         const pw = c.measureText(prefix).width;
         c.fillStyle = "#0a84ff";
-        c.fillText(ticket.ticketNumber, 22 + pw, ly);
-        c.fillRect(22 + pw, ly + 2, c.measureText(ticket.ticketNumber).width, 1);
+        c.fillText(ticket.ticketNumber, 26 + pw, ly);
+        c.fillRect(26 + pw, ly + 2, c.measureText(ticket.ticketNumber).width, 1);
       } else {
         c.fillStyle = "#fff"; c.font = "600 16px -apple-system, sans-serif";
-        c.fillText(line, 22, ly);
+        c.fillText(line, 26, ly); // Adjusted text position
       }
     });
 
@@ -353,15 +375,34 @@ export default function TicketGenerator() {
     c.fillStyle = "#1c1c1e"; c.fillRect(0, inputY, W, 60);
     c.strokeStyle = "#38383a"; c.lineWidth = 0.5;
     c.beginPath(); c.moveTo(0, inputY); c.lineTo(W, inputY); c.stroke();
+    
+    // Plus button circle
     c.fillStyle = "#3a3a3c";
     c.beginPath(); c.arc(28, inputY + 28, 16, 0, Math.PI * 2); c.fill();
+    
+    // Plus icon
     c.strokeStyle = "#ebebf5"; c.lineWidth = 2; c.lineCap = "round";
     c.beginPath(); c.moveTo(28, inputY + 21); c.lineTo(28, inputY + 35); c.stroke();
     c.beginPath(); c.moveTo(21, inputY + 28); c.lineTo(35, inputY + 28); c.stroke();
+    
+    // Text input field
     c.strokeStyle = "#48484a"; c.lineWidth = 0.5;
     rrect(52, inputY + 10, 280, 36, 18); c.stroke();
     c.fillStyle = "#636366"; c.font = "400 16px -apple-system, sans-serif";
     c.fillText("Text Message", 70, inputY + 33);
+    
+    // Microphone icon
+    c.save();
+    c.translate(W - 28, inputY + 28);
+    c.fillStyle = "#636366";
+    // Mic head
+    rrect(-4, -13, 8, 13, 4); c.fill();
+    // Mic stand
+    c.strokeStyle = "#636366"; c.lineWidth = 1.8; c.lineCap = "round";
+    c.beginPath(); c.moveTo(-7.5, 0); c.arc(0, 0, 7.5, Math.PI, 0, true); c.stroke();
+    c.beginPath(); c.moveTo(0, 13); c.lineTo(0, 17); c.stroke();
+    c.beginPath(); c.moveTo(-3, 17); c.lineTo(3, 17); c.stroke();
+    c.restore();
 
     // ── Home indicator (782–812px) ──
     const homeY = H - 30;
