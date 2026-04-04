@@ -546,20 +546,117 @@ export default function TicketGenerator() {
           {generatedImageUrl && (
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "10px", width: "100%" }}>
               <p style={{ color: "#5a5a72", fontSize: "12px", textAlign: "center", margin: 0, letterSpacing: "0.03em" }}>
-                Ține apăsat pe imagine și alege{" "}
-                <strong style={{ color: "#aaaacc" }}>"Adaugă la fotografii"</strong>
+                Ține apăsat pe imagine pentru a salva în poze
               </p>
-              <img
-                src={generatedImageUrl}
-                alt="Bilet electronic"
+              <div
                 style={{
+                  position: "relative",
                   width: "375px",
                   borderRadius: "54px",
                   border: "1px solid #2a2a2a",
                   display: "block",
                   WebkitTouchCallout: "default",
+                  WebkitUserSelect: "none",
+                  userSelect: "none",
+                  WebkitTapHighlightColor: "transparent",
+                  cursor: "pointer",
                 }}
-              />
+                onTouchStart={(e) => {
+                  e.preventDefault();
+                  const timer = setTimeout(() => {
+                        // Create download link
+                        const link = document.createElement('a');
+                        link.href = generatedImageUrl;
+                        link.download = `bilet-${ticket?.ticketNumber || 'electronic'}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        
+                        // Show feedback
+                        const toast = document.createElement('div');
+                        toast.textContent = 'Imagine salvată!';
+                        toast.style.cssText = `
+                          position: fixed;
+                          top: 50%;
+                          left: 50%;
+                          transform: translate(-50%, -50%);
+                          background: rgba(0,0,0,0.8);
+                          color: white;
+                          padding: 12px 24px;
+                          borderRadius: 8px;
+                          fontSize: 16px;
+                          zIndex: 9999;
+                        `;
+                        document.body.appendChild(toast);
+                        setTimeout(() => document.body.removeChild(toast), 2000);
+                      }, 500);
+                      
+                      // Store timer ID to clear on touch end
+                      (e.currentTarget as any).longPressTimer = timer;
+                    }}
+                onTouchEnd={(e) => {
+                  // Clear timer if touch ends before 500ms
+                  const timer = (e.currentTarget as any).longPressTimer;
+                  if (timer) {
+                    clearTimeout(timer);
+                    (e.currentTarget as any).longPressTimer = null;
+                  }
+                }}
+                onTouchCancel={(e) => {
+                  // Clear timer if touch is cancelled
+                  const timer = (e.currentTarget as any).longPressTimer;
+                  if (timer) {
+                    clearTimeout(timer);
+                    (e.currentTarget as any).longPressTimer = null;
+                  }
+                }}
+                onContextMenu={(e) => {
+                  e.preventDefault();
+                  // For desktop - right click to save
+                  const link = document.createElement('a');
+                  link.href = generatedImageUrl;
+                  link.download = `bilet-${ticket?.ticketNumber || 'electronic'}.png`;
+                  document.body.appendChild(link);
+                  link.click();
+                  document.body.removeChild(link);
+                }}
+              >
+                <img
+                  src={generatedImageUrl}
+                  alt="Bilet electronic"
+                  style={{
+                    width: "100%",
+                    height: "auto",
+                    borderRadius: "54px",
+                    display: "block",
+                    pointerEvents: "none",
+                  }}
+                />
+                {/* Vibration feedback overlay */}
+                <div style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  borderRadius: "54px",
+                  background: "rgba(255,255,255,0.1)",
+                  opacity: 0,
+                  transition: "opacity 0.2s",
+                  pointerEvents: "none",
+                }}
+                onTouchStart={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.opacity = "1";
+                      // Vibrate if available
+                      if (navigator.vibrate) {
+                        navigator.vibrate(50);
+                      }
+                    }}
+                onTouchEnd={(e) => {
+                  (e.currentTarget as HTMLDivElement).style.opacity = "0";
+                }}
+                />
+              </div>
             </div>
           )}
         </div>
