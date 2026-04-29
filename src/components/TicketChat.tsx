@@ -16,6 +16,7 @@ type Message =
   | { id: number; kind: "user"; text: string; time: string }
   | { id: number; kind: "bot"; text: string; time: string }
   | { id: number; kind: "ticket"; ticket: Ticket; time: string }
+  | { id: number; kind: "typing" }
   | { id: number; kind: "separator"; label: string };
 
 interface Contact {
@@ -31,6 +32,48 @@ const SF = "-apple-system, 'SF Pro Text', BlinkMacSystemFont, sans-serif";
 const BUBBLE_RECV = "#2c2c2e";
 const BUBBLE_SENT = "#34c759";
 const AVATAR_BG = "#3a3a3c";
+
+const STYLE_TAG_ID = "ticket-chat-anim";
+
+function injectStyles() {
+  if (typeof document === "undefined") return;
+  if (document.getElementById(STYLE_TAG_ID)) return;
+  const css = `
+    @keyframes tc-pop-in {
+      0%   { opacity: 0; transform: translateY(8px) scale(0.96); }
+      100% { opacity: 1; transform: translateY(0)   scale(1);    }
+    }
+    @keyframes tc-fade-in {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0);   }
+    }
+    @keyframes tc-dot {
+      0%, 60%, 100% { transform: translateY(0);    opacity: 0.5; }
+      30%           { transform: translateY(-4px); opacity: 1;   }
+    }
+    @keyframes tc-row-in {
+      from { opacity: 0; transform: translateX(-6px); }
+      to   { opacity: 1; transform: translateX(0);    }
+    }
+    .tc-bubble    { animation: tc-pop-in  220ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+    .tc-separator { animation: tc-fade-in 260ms ease-out both; }
+    .tc-row       { animation: tc-row-in  280ms ease-out both; }
+    .tc-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: #8e8e93;
+      animation: tc-dot 1s infinite ease-in-out;
+    }
+    .tc-dot:nth-child(2) { animation-delay: 0.15s; }
+    .tc-dot:nth-child(3) { animation-delay: 0.3s;  }
+    .tc-press { transition: transform 120ms ease, background-color 150ms ease; }
+    .tc-press:active { transform: scale(0.97); }
+    .tc-row-btn { transition: background-color 150ms ease; }
+    .tc-row-btn:active { background-color: #1c1c1e; }
+  `;
+  const tag = document.createElement("style");
+  tag.id = STYLE_TAG_ID;
+  tag.textContent = css;
+  document.head.appendChild(tag);
+}
 
 function genTicketNumber(route: string): string {
   return `${route}${Math.floor(1000 + Math.random() * 9000)}`;
@@ -66,7 +109,7 @@ function buildTicket(route: string): Ticket {
 
 const CONTACTS: Contact[] = [
   { id: "7000",        name: "7000",        unread: false, isTicketBot: true,
-    preview: "Tranzactia a esuat din cauza ca nu ai suficienti bani in cont pentru a procura bil...",
+    preview: "Electronic ticket nr. 38432214 Date 23.02.2026 hour 09:19 Valid 1 hour Price 6 MDL Bo...",
     previewTime: "Yesterday" },
   { id: "vbcolectare", name: "VBColectare", unread: false,
     preview: "Stimate client, inregistrati un overdraft nesanctionat la card. Va rugam efectuati p...",
@@ -86,6 +129,39 @@ const CONTACTS: Contact[] = [
   { id: "novapost",    name: "Nova Post",   unread: true,
     preview: "Instaleaza noua aplicatie Nova Post https://url.novapost.com/UtWD4h! Ai -15% cu co...",
     previewTime: "21.04.2026" },
+  { id: "maib",        name: "MAIB",        unread: false,
+    preview: "Achitare reusita 245.50 MDL la LINELLA. Sold disponibil: 3,420.18 MDL. Detalii in ap...",
+    previewTime: "20.04.2026" },
+  { id: "moldcell",    name: "Moldcell",    unread: true,
+    preview: "Abonamentul tau Unlimited a fost reinnoit. 500 minute, 100 SMS si trafic nelimitat...",
+    previewTime: "19.04.2026" },
+  { id: "glovo",       name: "Glovo",       unread: false,
+    preview: "Comanda ta #G8842 a fost livrata. Multumim ca ai ales Glovo! Lasa o evaluare in ap...",
+    previewTime: "18.04.2026" },
+  { id: "wolt",        name: "Wolt",        unread: true,
+    preview: "Curierul tau Andrei e in drum spre tine. Timp estimat de sosire: 12 minute.",
+    previewTime: "17.04.2026" },
+  { id: "bolt",        name: "Bolt",        unread: false,
+    preview: "Codul tau de verificare Bolt este 4421. Nu il transmite nimanui.",
+    previewTime: "16.04.2026" },
+  { id: "yango",       name: "Yango",       unread: true,
+    preview: "Soferul Sergiu (Skoda Octavia, ABC 123) va sosi peste 3 minute. Pretul cursei: 65 MDL.",
+    previewTime: "15.04.2026" },
+  { id: "moldovagaz",  name: "MoldovaGaz",  unread: false,
+    preview: "Factura pentru luna martie 2026 in valoare de 1,287.40 MDL. Termen limita: 25.04.2026.",
+    previewTime: "14.04.2026" },
+  { id: "maibpay",     name: "MAIB Pay",    unread: true,
+    preview: "Ai primit 500.00 MDL de la Ion P. Mesaj: \"Restul de la cina\". Vezi detalii in aplicatie.",
+    previewTime: "13.04.2026" },
+  { id: "posta",       name: "Posta MD",    unread: false,
+    preview: "Coletul RR123456789MD a sosit la oficiul postal Chisinau-12. Termen de pastrare: 30 zile.",
+    previewTime: "12.04.2026" },
+  { id: "energocom",   name: "Energocom",   unread: false,
+    preview: "Consum energie electrica martie: 184 kWh. Suma de plata: 654.20 MDL. Plateste pina la 28.04.",
+    previewTime: "10.04.2026" },
+  { id: "smartid",     name: "Smart-ID",    unread: true,
+    preview: "Cerere de autentificare la MAIB Online. Codul de control: 7423. Confirma sau respinge.",
+    previewTime: "08.04.2026" },
 ];
 
 const INITIAL_MESSAGES: Record<string, Message[]> = {
@@ -96,10 +172,18 @@ const INITIAL_MESSAGES: Record<string, Message[]> = {
   orange:      [{ id: 1, kind: "bot", text: "Ati primit 20 Puncte de Fidelitate. In total aveti 162 puncte, egale cu 162 minute nationale.", time: "Monday" }],
   nica:        [{ id: 1, kind: "bot", text: "Ai avut 2 apeluri de la aceasta persoana. Ultimul - pe 26/04 la 19:58. Orange", time: "Sunday" }],
   novapost:    [{ id: 1, kind: "bot", text: "Instaleaza noua aplicatie Nova Post https://url.novapost.com/UtWD4h! Ai -15% cu codul UTWD4H.", time: "21.04.2026" }],
+  maib:        [{ id: 1, kind: "bot", text: "Achitare reusita 245.50 MDL la LINELLA. Sold disponibil: 3,420.18 MDL. Detalii in aplicatia MAIB.", time: "20.04.2026" }],
+  moldcell:    [{ id: 1, kind: "bot", text: "Abonamentul tau Unlimited a fost reinnoit. 500 minute, 100 SMS si trafic nelimitat pentru 30 de zile.", time: "19.04.2026" }],
+  glovo:       [{ id: 1, kind: "bot", text: "Comanda ta #G8842 a fost livrata. Multumim ca ai ales Glovo! Lasa o evaluare in aplicatie.", time: "18.04.2026" }],
+  wolt:        [{ id: 1, kind: "bot", text: "Curierul tau Andrei e in drum spre tine. Timp estimat de sosire: 12 minute.", time: "17.04.2026" }],
+  bolt:        [{ id: 1, kind: "bot", text: "Codul tau de verificare Bolt este 4421. Nu il transmite nimanui.", time: "16.04.2026" }],
+  yango:       [{ id: 1, kind: "bot", text: "Soferul Sergiu (Skoda Octavia, ABC 123) va sosi peste 3 minute. Pretul cursei: 65 MDL.", time: "15.04.2026" }],
+  moldovagaz:  [{ id: 1, kind: "bot", text: "Factura pentru luna martie 2026 in valoare de 1,287.40 MDL. Termen limita: 25.04.2026.", time: "14.04.2026" }],
+  maibpay:     [{ id: 1, kind: "bot", text: "Ai primit 500.00 MDL de la Ion P. Mesaj: \"Restul de la cina\". Vezi detalii in aplicatie.", time: "13.04.2026" }],
+  posta:       [{ id: 1, kind: "bot", text: "Coletul RR123456789MD a sosit la oficiul postal Chisinau-12. Termen de pastrare: 30 zile.", time: "12.04.2026" }],
+  energocom:   [{ id: 1, kind: "bot", text: "Consum energie electrica martie: 184 kWh. Suma de plata: 654.20 MDL. Plateste pina la 28.04.", time: "10.04.2026" }],
+  smartid:     [{ id: 1, kind: "bot", text: "Cerere de autentificare la MAIB Online. Codul de control: 7423. Confirma sau respinge.", time: "08.04.2026" }],
 };
-
-const ERROR_TEXT =
-  "Tranzactia a esuat din cauza ca nu ai suficienti bani in cont pentru a procura bilete. Reincarca contul, apoi incearca din nou.";
 
 const Avatar = ({ size }: { size: number }) => (
   <div style={{
@@ -124,6 +208,7 @@ const ContactHeader = ({
     <button
       onClick={onBack}
       aria-label="Înapoi"
+      className="tc-press"
       style={{
         position: "absolute", left: 12, top: 16,
         background: "#1c1c1e", border: "none", borderRadius: 16,
@@ -149,7 +234,7 @@ const ContactHeader = ({
 );
 
 const SentBubble = ({ text }: { text: string }) => (
-  <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4, paddingRight: 6 }}>
+  <div className="tc-bubble" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4, paddingRight: 6 }}>
     <div style={{
       backgroundColor: BUBBLE_SENT, color: "#fff",
       padding: "9px 16px", borderRadius: 20, borderBottomRightRadius: 6,
@@ -159,7 +244,7 @@ const SentBubble = ({ text }: { text: string }) => (
 );
 
 const ReceivedTextBubble = ({ text }: { text: string }) => (
-  <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: 3, paddingLeft: 6 }}>
+  <div className="tc-bubble" style={{ display: "flex", justifyContent: "flex-start", marginBottom: 3, paddingLeft: 6 }}>
     <div style={{
       backgroundColor: BUBBLE_RECV, color: "#fff",
       padding: "10px 14px", borderRadius: 20, borderBottomLeftRadius: 6,
@@ -169,7 +254,7 @@ const ReceivedTextBubble = ({ text }: { text: string }) => (
 );
 
 const TicketBubble = ({ ticket }: { ticket: Ticket }) => (
-  <div style={{ display: "flex", justifyContent: "flex-start", marginBottom: 6, paddingLeft: 6 }}>
+  <div className="tc-bubble" style={{ display: "flex", justifyContent: "flex-start", marginBottom: 6, paddingLeft: 6 }}>
     <div style={{
       backgroundColor: BUBBLE_RECV, color: "#fff",
       padding: "11px 14px", borderRadius: 20, borderBottomLeftRadius: 6,
@@ -185,8 +270,22 @@ const TicketBubble = ({ ticket }: { ticket: Ticket }) => (
   </div>
 );
 
+const TypingBubble = () => (
+  <div className="tc-bubble" style={{ display: "flex", justifyContent: "flex-start", marginBottom: 4, paddingLeft: 6 }}>
+    <div style={{
+      backgroundColor: BUBBLE_RECV,
+      padding: "12px 14px", borderRadius: 20, borderBottomLeftRadius: 6,
+      display: "flex", alignItems: "center", gap: 5,
+    }}>
+      <span className="tc-dot" />
+      <span className="tc-dot" />
+      <span className="tc-dot" />
+    </div>
+  </div>
+);
+
 const Separator = ({ label }: { label: string }) => (
-  <div style={{
+  <div className="tc-separator" style={{
     textAlign: "center", color: "#8e8e93", fontSize: 12, fontWeight: 500,
     margin: "10px 0 6px", fontFamily: SF,
   }}>{label}</div>
@@ -207,7 +306,7 @@ const InputBar = ({
       paddingBottom: "max(6px, env(safe-area-inset-bottom))",
       gap: 8, flexShrink: 0,
     }}>
-      <div style={{
+      <div className="tc-press" style={{
         width: 32, height: 32, borderRadius: "50%", backgroundColor: "#1c1c1e",
         display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
       }}>
@@ -228,12 +327,14 @@ const InputBar = ({
             flex: 1, border: "0.5px solid #2c2c2e", borderRadius: 18,
             padding: "7px 36px 7px 14px", color: "#fff", fontSize: 16, fontFamily: SF,
             backgroundColor: "transparent", outline: "none", minWidth: 0,
+            transition: "border-color 200ms ease",
           }}
         />
         {canSend ? (
           <button
             type="submit"
             aria-label="Trimite"
+            className="tc-press tc-bubble"
             style={{
               position: "absolute", right: 4, top: "50%", transform: "translateY(-50%)",
               width: 28, height: 28, borderRadius: "50%", border: "none",
@@ -259,18 +360,17 @@ const InputBar = ({
   );
 };
 
-// ─── List view top buttons ───
 const ChatListTopBar = () => (
   <div style={{
     padding: "10px 14px 4px",
     display: "flex", alignItems: "center", justifyContent: "space-between", flexShrink: 0,
   }}>
-    <button style={{
+    <button className="tc-press" style={{
       background: "#1c1c1e", border: "none", borderRadius: 18,
       padding: "7px 16px", color: "#fff", fontSize: 16, fontWeight: 400,
       fontFamily: SF, cursor: "pointer",
     }}>Edit</button>
-    <button style={{
+    <button className="tc-press" style={{
       background: "#1c1c1e", border: "none", borderRadius: "50%",
       width: 36, height: 36, display: "flex", alignItems: "center",
       justifyContent: "center", cursor: "pointer",
@@ -293,13 +393,15 @@ const ChatListTitle = () => (
   </div>
 );
 
-const ChatRow = ({ contact, onOpen }: { contact: Contact; onOpen: () => void }) => (
+const ChatRow = ({ contact, onOpen, index }: { contact: Contact; onOpen: () => void; index: number }) => (
   <button
     onClick={onOpen}
+    className="tc-row tc-row-btn"
     style={{
       display: "flex", alignItems: "flex-start", gap: 8,
       padding: "8px 16px 0 4px", background: "none", border: "none",
       width: "100%", textAlign: "left", cursor: "pointer",
+      animationDelay: `${Math.min(index, 12) * 35}ms`,
     }}
   >
     <div style={{
@@ -357,7 +459,7 @@ const BottomSearchBar = () => (
         <line x1="5"   y1="21" x2="12"  y2="21" stroke="#8e8e93" strokeWidth="1.8" strokeLinecap="round" />
       </svg>
     </div>
-    <button style={{
+    <button className="tc-press" style={{
       width: 38, height: 38, background: "#1c1c1e", border: "none",
       borderRadius: "50%", display: "flex", alignItems: "center",
       justifyContent: "center", cursor: "pointer", flexShrink: 0,
@@ -379,9 +481,11 @@ export default function TicketChat() {
   const idRef = useRef(100);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  useEffect(() => { injectStyles(); }, []);
+
   useEffect(() => {
     const el = scrollRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
   }, [allMessages, view]);
 
   useEffect(() => { setInput(""); }, [view]);
@@ -393,6 +497,12 @@ export default function TicketChat() {
   const pushMessage = (chatId: string, msg: Message) =>
     setAllMessages((prev) => ({ ...prev, [chatId]: [...(prev[chatId] ?? []), msg] }));
 
+  const removeMessage = (chatId: string, msgId: number) =>
+    setAllMessages((prev) => ({
+      ...prev,
+      [chatId]: (prev[chatId] ?? []).filter((m) => m.id !== msgId),
+    }));
+
   const handleSend = () => {
     if (!activeContact) return;
     const text = input.trim();
@@ -400,21 +510,22 @@ export default function TicketChat() {
     setInput("");
 
     const now = new Date();
-    pushMessage(activeContact.id, { id: idRef.current++, kind: "separator", label: fmtSeparator(now) });
-    pushMessage(activeContact.id, { id: idRef.current++, kind: "user", text, time: fmtTime(now) });
+    const chatId = activeContact.id;
+    pushMessage(chatId, { id: idRef.current++, kind: "separator", label: fmtSeparator(now) });
+    pushMessage(chatId, { id: idRef.current++, kind: "user", text, time: fmtTime(now) });
 
     if (activeContact.isTicketBot) {
-      const willFail = Math.random() < 0.2;
+      const typingId = idRef.current++;
       setTimeout(() => {
-        if (willFail) {
-          pushMessage(activeContact.id, { id: idRef.current++, kind: "bot", text: ERROR_TEXT, time: fmtTime(new Date()) });
-        } else {
-          pushMessage(activeContact.id, {
-            id: idRef.current++, kind: "ticket",
-            ticket: buildTicket(text), time: fmtTime(new Date()),
-          });
-        }
-      }, 700);
+        pushMessage(chatId, { id: typingId, kind: "typing" });
+      }, 350);
+      setTimeout(() => {
+        removeMessage(chatId, typingId);
+        pushMessage(chatId, {
+          id: idRef.current++, kind: "ticket",
+          ticket: buildTicket(text), time: fmtTime(new Date()),
+        });
+      }, 1400);
     }
   };
 
@@ -437,8 +548,8 @@ export default function TicketChat() {
         <ChatListTopBar />
         <ChatListTitle />
         <div style={{ flex: 1, overflowY: "auto" }}>
-          {CONTACTS.map((c) => (
-            <ChatRow key={c.id} contact={c} onOpen={() => setView(c.id)} />
+          {CONTACTS.map((c, i) => (
+            <ChatRow key={c.id} contact={c} index={i} onOpen={() => setView(c.id)} />
           ))}
         </div>
         <BottomSearchBar />
@@ -464,13 +575,16 @@ export default function TicketChat() {
         style={{
           backgroundColor: "#000", flex: 1, padding: "0 4px 8px",
           display: "flex", flexDirection: "column", overflowY: "auto",
+          scrollBehavior: "smooth",
         }}
       >
         {activeContact.isTicketBot && activeMessages.length === 0 && (
-          <div style={{
+          <div className="tc-separator" style={{
             color: "#48484a", fontSize: 13, textAlign: "center",
             margin: "auto 24px", fontFamily: SF, lineHeight: 1.5,
           }}>
+            Trimite numărul de bord (ex. <span style={{ color: "#0a84ff" }}>1335</span>)
+            pentru a primi biletul electronic.
           </div>
         )}
 
@@ -478,6 +592,7 @@ export default function TicketChat() {
           if (m.kind === "user")      return <SentBubble        key={m.id} text={m.text} />;
           if (m.kind === "bot")       return <ReceivedTextBubble key={m.id} text={m.text} />;
           if (m.kind === "separator") return <Separator         key={m.id} label={m.label} />;
+          if (m.kind === "typing")    return <TypingBubble      key={m.id} />;
           return <TicketBubble key={m.id} ticket={m.ticket} />;
         })}
       </div>
