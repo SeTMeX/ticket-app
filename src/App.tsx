@@ -1,5 +1,5 @@
-import TicketGenerator from "./components/TicketGenerator";
+import TicketChat from "./components/TicketChat";
 
 export default function App() {
-  return <TicketGenerator />;
+  return <TicketChat />;
 }
