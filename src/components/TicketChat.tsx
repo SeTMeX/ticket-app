@@ -109,7 +109,7 @@ function buildTicket(route: string): Ticket {
 
 const CONTACTS: Contact[] = [
   { id: "7000",        name: "7000",        unread: false, isTicketBot: true,
-    preview: "Electronic ticket nr. 38432214 Date 23.02.2026 hour 09:19 Valid 1 hour Price 6 MDL Bo...",
+    preview: "Bilet electronic nr. 13376149. 23.02.2026. Valabil 1 ora. Pret 7 MDL. Numar de bord 1337",
     previewTime: "Yesterday" },
   { id: "vbcolectare", name: "VBColectare", unread: false,
     preview: "Stimate client, inregistrati un overdraft nesanctionat la card. Va rugam efectuati p...",
@@ -258,14 +258,18 @@ const TicketBubble = ({ ticket }: { ticket: Ticket }) => (
     <div style={{
       backgroundColor: BUBBLE_RECV, color: "#fff",
       padding: "11px 14px", borderRadius: 20, borderBottomLeftRadius: 6,
-      fontSize: 16, fontWeight: 400, fontFamily: SF, maxWidth: "82%", lineHeight: 1.5,
+      fontSize: 16, fontWeight: 400, fontFamily: SF, maxWidth: "82%", lineHeight: 1.6,
     }}>
-      {`Electronic ticket nr. ${ticket.ticketNumber}`}<br />
-      {`Date ${ticket.date} hour `}
-      <span style={{ textDecoration: "underline" }}>{ticket.time}</span><br />
-      {"Valid 1 hour"}<br />
-      {"Price 6 MDL"}<br />
-      {`Board number ${ticket.routeNumber}`}
+      {"Bilet electronic nr."}<br />
+      <span style={{ color: "#4db8ff", textDecoration: "underline" }}>{ticket.ticketNumber}</span><br />
+      {ticket.date}<br />
+      {"Valabil 1 ora (de la "}
+      <span style={{ textDecoration: "underline" }}>{ticket.time}</span>
+      {" pina la "}
+      <span style={{ textDecoration: "underline" }}>{ticket.endTime}</span>
+      {")"}<br />
+      {"Pret 7 MDL"}<br />
+      {`Numar de bord ${ticket.routeNumber}`}
     </div>
   </div>
 );
@@ -522,10 +526,17 @@ export default function TicketChat() {
       setTimeout(() => {
         removeMessage(chatId, typingId);
         pushMessage(chatId, {
+          id: idRef.current++, kind: "bot",
+          text: "Solicitarea este in curs de procesare.",
+          time: fmtTime(new Date()),
+        });
+      }, 1200);
+      setTimeout(() => {
+        pushMessage(chatId, {
           id: idRef.current++, kind: "ticket",
           ticket: buildTicket(text), time: fmtTime(new Date()),
         });
-      }, 1400);
+      }, 2400);
     }
   };
 
@@ -583,8 +594,6 @@ export default function TicketChat() {
             color: "#48484a", fontSize: 13, textAlign: "center",
             margin: "auto 24px", fontFamily: SF, lineHeight: 1.5,
           }}>
-            Trimite numărul de bord (ex. <span style={{ color: "#0a84ff" }}>1335</span>)
-            pentru a primi biletul electronic.
           </div>
         )}
 
