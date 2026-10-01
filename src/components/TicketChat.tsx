@@ -111,6 +111,9 @@ const CONTACTS: Contact[] = [
   { id: "7000",        name: "7000",        unread: false, isTicketBot: true,
     preview: "Bilet electronic nr. 13376149. 23.02.2026. Valabil 1 ora. Pret 7 MDL. Numar de bord 1337",
     previewTime: "Yesterday" },
+  { id: "7001",        name: "7001",        unread: false, isTicketBot: true,
+    preview: "Bilet electronic nr. 24589212. 23.02.2026. Valabil 1 ora. Pret 7 MDL. Numar de bord 2458",
+    previewTime: "Yesterday" },
   { id: "vbcolectare", name: "VBColectare", unread: false,
     preview: "Stimate client, inregistrati un overdraft nesanctionat la card. Va rugam efectuati p...",
     previewTime: "Monday" },
@@ -164,8 +167,30 @@ const CONTACTS: Contact[] = [
     previewTime: "08.04.2026" },
 ];
 
+const STORAGE_KEY_PREFIX = "ticket_chat_messages_";
+
+function loadMessagesFromStorage(chatId: string): Message[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${chatId}`);
+    return stored ? JSON.parse(stored) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveMessagesToStorage(chatId: string, messages: Message[]) {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(`${STORAGE_KEY_PREFIX}${chatId}`, JSON.stringify(messages));
+  } catch {
+    // Ignore storage errors
+  }
+}
+
 const INITIAL_MESSAGES: Record<string, Message[]> = {
-  "7000":      [],
+  "7000":      loadMessagesFromStorage("7000"),
+  "7001":      loadMessagesFromStorage("7001"),
   vbcolectare: [{ id: 1, kind: "bot", text: "Stimate client, inregistrati un overdraft nesanctionat la card. Va rugam efectuati plata pina la sfirsitul lunii.", time: "Monday" }],
   google:      [{ id: 1, kind: "bot", text: "G-097432 – код подтверждения Google. Никому не сообщайте его.", time: "Monday" }],
   n2525:       [{ id: 1, kind: "bot", text: "In adresa DVS a parvenit transfer de bani numarul DP8013963823RC. Achitarea estimativa - astazi.", time: "Monday" }],
@@ -498,14 +523,30 @@ export default function TicketChat() {
   const activeMessages = activeContact ? (allMessages[activeContact.id] ?? []) : [];
   const unreadCount = CONTACTS.filter((c) => c.unread).length;
 
-  const pushMessage = (chatId: string, msg: Message) =>
-    setAllMessages((prev) => ({ ...prev, [chatId]: [...(prev[chatId] ?? []), msg] }));
+  const pushMessage = (chatId: string, msg: Message) => {
+    setAllMessages((prev) => {
+      const updated = { ...prev, [chatId]: [...(prev[chatId] ?? []), msg] };
+      // Save to localStorage for ticket bots (7000, 7001)
+      if (chatId === "7000" || chatId === "7001") {
+        saveMessagesToStorage(chatId, updated[chatId]);
+      }
+      return updated;
+    });
+  };
 
-  const removeMessage = (chatId: string, msgId: number) =>
-    setAllMessages((prev) => ({
-      ...prev,
-      [chatId]: (prev[chatId] ?? []).filter((m) => m.id !== msgId),
-    }));
+  const removeMessage = (chatId: string, msgId: number) => {
+    setAllMessages((prev) => {
+      const updated = {
+        ...prev,
+        [chatId]: (prev[chatId] ?? []).filter((m) => m.id !== msgId),
+      };
+      // Save to localStorage for ticket bots (7000, 7001)
+      if (chatId === "7000" || chatId === "7001") {
+        saveMessagesToStorage(chatId, updated[chatId]);
+      }
+      return updated;
+    });
+  };
 
   const handleSend = () => {
     if (!activeContact) return;
