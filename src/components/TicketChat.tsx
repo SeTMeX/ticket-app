@@ -109,10 +109,10 @@ function buildTicket(route: string): Ticket {
 
 const CONTACTS: Contact[] = [
   { id: "7000",        name: "7000",        unread: false, isTicketBot: true,
-    preview: "Bilet electronic nr. 13376149. 23.02.2026. Valabil 1 ora. Pret 7 MDL",
+    preview: "",
     previewTime: "Yesterday" },
   { id: "7001",        name: "7001",        unread: false, isTicketBot: true,
-    preview: "Bilet electronic nr. 24589212. 23.02.2026. Valabil 1 ora. Pret 7 MDL",
+    preview: "",
     previewTime: "Yesterday" },
   { id: "vbcolectare", name: "VBColectare", unread: false,
     preview: "Stimate client, inregistrati un overdraft nesanctionat la card. Va rugam efectuati p...",
