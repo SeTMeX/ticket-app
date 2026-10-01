@@ -533,7 +533,9 @@ export default function TicketChat() {
       const updated = prevContacts.map((contact) => {
         if (contact.id === "7000" || contact.id === "7001") {
           const messages = allMessages[contact.id] ?? [];
-          const lastMessage = messages[messages.length - 1];
+          // Filter to only messages that have time property
+          const messagesWithTime = messages.filter((m): m is Message & { time: string } => "time" in m);
+          const lastMessage = messagesWithTime[messagesWithTime.length - 1];
           if (lastMessage) {
             return {
               ...contact,
