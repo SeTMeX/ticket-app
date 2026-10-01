@@ -109,10 +109,10 @@ function buildTicket(route: string): Ticket {
 
 const CONTACTS: Contact[] = [
   { id: "7000",        name: "7000",        unread: false, isTicketBot: true,
-    preview: "Bilet electronic nr. 13376149. 23.02.2026. Valabil 1 ora. Pret 7 MDL. Numar de bord 1337",
+    preview: "Bilet electronic nr. 13376149. 23.02.2026. Valabil 1 ora. Pret 7 MDL",
     previewTime: "Yesterday" },
   { id: "7001",        name: "7001",        unread: false, isTicketBot: true,
-    preview: "Bilet electronic nr. 24589212. 23.02.2026. Valabil 1 ora. Pret 7 MDL. Numar de bord 2458",
+    preview: "Bilet electronic nr. 24589212. 23.02.2026. Valabil 1 ora. Pret 7 MDL",
     previewTime: "Yesterday" },
   { id: "vbcolectare", name: "VBColectare", unread: false,
     preview: "Stimate client, inregistrati un overdraft nesanctionat la card. Va rugam efectuati p...",
@@ -228,29 +228,29 @@ const ContactHeader = ({
 }: { contact: Contact; unreadCount: number; onBack: () => void }) => (
   <div style={{
     backgroundColor: "#000", display: "flex", flexDirection: "column", alignItems: "center",
-    paddingTop: 8, paddingBottom: 10, position: "relative", flexShrink: 0,
+    paddingTop: 10, paddingBottom: 12, position: "relative", flexShrink: 0,
   }}>
     <button
       onClick={onBack}
       aria-label="Înapoi"
       className="tc-press"
       style={{
-        position: "absolute", left: 12, top: 16,
+        position: "absolute", left: 12, top: 18,
         background: "#1c1c1e", border: "none", borderRadius: 16,
-        padding: "5px 11px 5px 7px", display: "flex", alignItems: "center", gap: 3,
+        padding: "6px 12px 6px 8px", display: "flex", alignItems: "center", gap: 3,
         cursor: "pointer",
       }}
     >
       <svg width="9" height="15" viewBox="0 0 9 15" fill="none">
         <path d="M7 1.5L1.5 7.5L7 13.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
-      <span style={{ color: "#fff", fontSize: 15, fontWeight: 500, fontFamily: SF }}>{unreadCount}</span>
+      <span style={{ color: "#fff", fontSize: 16, fontWeight: 500, fontFamily: SF }}>{unreadCount}</span>
     </button>
     <div style={{ marginBottom: 4 }}>
-      <Avatar size={50} />
+      <Avatar size={52} />
     </div>
     <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
-      <span style={{ color: "#fff", fontSize: 14, fontWeight: 600, fontFamily: SF }}>{contact.name}</span>
+      <span style={{ color: "#fff", fontSize: 15, fontWeight: 600, fontFamily: SF }}>{contact.name}</span>
       <svg width="6" height="11" viewBox="0 0 6 11" fill="none">
         <path d="M1 1L5 5.5L1 10" stroke="#8e8e93" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
@@ -262,8 +262,8 @@ const SentBubble = ({ text }: { text: string }) => (
   <div className="tc-bubble" style={{ display: "flex", justifyContent: "flex-end", marginBottom: 4, paddingRight: 6 }}>
     <div style={{
       backgroundColor: BUBBLE_SENT, color: "#fff",
-      padding: "9px 16px", borderRadius: 20, borderBottomRightRadius: 6,
-      fontSize: 17, fontWeight: 500, fontFamily: SF, maxWidth: "70%", lineHeight: 1.3, wordBreak: "break-word",
+      padding: "10px 16px", borderRadius: 20, borderBottomRightRadius: 6,
+      fontSize: 16, fontWeight: 500, fontFamily: SF, maxWidth: "75%", lineHeight: 1.4, wordBreak: "break-word",
     }}>{text}</div>
   </div>
 );
@@ -273,7 +273,7 @@ const ReceivedTextBubble = ({ text }: { text: string }) => (
     <div style={{
       backgroundColor: BUBBLE_RECV, color: "#fff",
       padding: "10px 14px", borderRadius: 20, borderBottomLeftRadius: 6,
-      fontSize: 16, fontWeight: 400, fontFamily: SF, maxWidth: "82%", lineHeight: 1.4, wordBreak: "break-word",
+      fontSize: 15, fontWeight: 400, fontFamily: SF, maxWidth: "85%", lineHeight: 1.4, wordBreak: "break-word",
     }}>{text}</div>
   </div>
 );
@@ -283,7 +283,7 @@ const TicketBubble = ({ ticket }: { ticket: Ticket }) => (
     <div style={{
       backgroundColor: BUBBLE_RECV, color: "#fff",
       padding: "11px 14px", borderRadius: 20, borderBottomLeftRadius: 6,
-      fontSize: 16, fontWeight: 400, fontFamily: SF, maxWidth: "82%", lineHeight: 1.6,
+      fontSize: 15, fontWeight: 400, fontFamily: SF, maxWidth: "85%", lineHeight: 1.5,
     }}>
       {"Bilet electronic nr."}<br />
       <span style={{ color: "#4db8ff", textDecoration: "underline" }}>{ticket.ticketNumber}</span><br />
@@ -293,8 +293,7 @@ const TicketBubble = ({ ticket }: { ticket: Ticket }) => (
       {" pina la "}
       <span style={{ textDecoration: "underline" }}>{ticket.endTime}</span>
       {")"}<br />
-      {"Pret 7 MDL"}<br />
-      {`Numar de bord ${ticket.routeNumber}`}
+      {"Pret 7 MDL"}
     </div>
   </div>
 );
@@ -428,27 +427,27 @@ const ChatRow = ({ contact, onOpen, index }: { contact: Contact; onOpen: () => v
     className="tc-row tc-row-btn"
     style={{
       display: "flex", alignItems: "flex-start", gap: 8,
-      padding: "8px 16px 0 4px", background: "none", border: "none",
+      padding: "10px 16px 0 4px", background: "none", border: "none",
       width: "100%", textAlign: "left", cursor: "pointer",
       animationDelay: `${Math.min(index, 12) * 35}ms`,
     }}
   >
     <div style={{
-      width: 16, display: "flex", justifyContent: "center", paddingTop: 26, flexShrink: 0,
+      width: 16, display: "flex", justifyContent: "center", paddingTop: 28, flexShrink: 0,
     }}>
       {contact.unread && (
         <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#0a84ff" }} />
       )}
     </div>
     <div style={{ marginTop: 4 }}>
-      <Avatar size={50} />
+      <Avatar size={52} />
     </div>
     <div style={{
-      flex: 1, minWidth: 0, paddingLeft: 4, paddingTop: 6, paddingBottom: 10,
+      flex: 1, minWidth: 0, paddingLeft: 4, paddingTop: 8, paddingBottom: 12,
       borderBottom: "0.5px solid #1c1c1e",
     }}>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 6 }}>
-        <span style={{ color: "#fff", fontSize: 17, fontWeight: 600, fontFamily: SF }}>{contact.name}</span>
+        <span style={{ color: "#fff", fontSize: 18, fontWeight: 600, fontFamily: SF }}>{contact.name}</span>
         <div style={{ display: "flex", alignItems: "center", gap: 4, flexShrink: 0 }}>
           <span style={{ color: "#8e8e93", fontSize: 15, fontFamily: SF }}>{contact.previewTime}</span>
           <svg width="7" height="12" viewBox="0 0 8 14" fill="none">
