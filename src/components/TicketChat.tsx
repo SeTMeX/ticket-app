@@ -107,7 +107,15 @@ function buildTicket(route: string): Ticket {
   };
 }
 
-const CONTACTS: Contact[] = [
+function getMessagePreview(msg: Message): string {
+  if (msg.kind === "user") return msg.text;
+  if (msg.kind === "bot") return msg.text;
+  if (msg.kind === "ticket") return "Bilet electronic";
+  if (msg.kind === "separator") return "";
+  return "";
+}
+
+const INITIAL_CONTACTS: Contact[] = [
   { id: "7000",        name: "7000",        unread: false, isTicketBot: true,
     preview: "",
     previewTime: "Yesterday" },
@@ -505,6 +513,7 @@ const BottomSearchBar = () => (
 export default function TicketChat() {
   const [view, setView] = useState<View>("list");
   const [allMessages, setAllMessages] = useState<Record<string, Message[]>>(INITIAL_MESSAGES);
+  const [contacts, setContacts] = useState<Contact[]>(INITIAL_CONTACTS);
   const [input, setInput] = useState("");
   const idRef = useRef(100);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -518,9 +527,30 @@ export default function TicketChat() {
 
   useEffect(() => { setInput(""); }, [view]);
 
-  const activeContact = view !== "list" ? CONTACTS.find((c) => c.id === view) ?? null : null;
+  // Update contact previews when messages change for 7000 and 7001
+  useEffect(() => {
+    setContacts((prevContacts) => {
+      const updated = prevContacts.map((contact) => {
+        if (contact.id === "7000" || contact.id === "7001") {
+          const messages = allMessages[contact.id] ?? [];
+          const lastMessage = messages[messages.length - 1];
+          if (lastMessage) {
+            return {
+              ...contact,
+              preview: getMessagePreview(lastMessage),
+              previewTime: lastMessage.time,
+            };
+          }
+        }
+        return contact;
+      });
+      return updated;
+    });
+  }, [allMessages]);
+
+  const activeContact = view !== "list" ? contacts.find((c) => c.id === view) ?? null : null;
   const activeMessages = activeContact ? (allMessages[activeContact.id] ?? []) : [];
-  const unreadCount = CONTACTS.filter((c) => c.unread).length;
+  const unreadCount = contacts.filter((c) => c.unread).length;
 
   const pushMessage = (chatId: string, msg: Message) => {
     setAllMessages((prev) => {
@@ -599,7 +629,7 @@ export default function TicketChat() {
         <ChatListTopBar />
         <ChatListTitle />
         <div style={{ flex: 1, overflowY: "auto" }}>
-          {CONTACTS.map((c, i) => (
+          {contacts.map((c, i) => (
             <ChatRow key={c.id} contact={c} index={i} onOpen={() => setView(c.id)} />
           ))}
         </div>
