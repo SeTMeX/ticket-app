@@ -10,6 +10,7 @@ interface Ticket {
   time: string;
   endTime: string;
   date: string;
+  boardNumber: string;
 }
 
 type Message =
@@ -96,7 +97,7 @@ function plusHour(d: Date): Date {
   x.setHours(x.getHours() + 1);
   return x;
 }
-function buildTicket(route: string): Ticket {
+function buildTicket(route: string, boardNumber: string): Ticket {
   const now = new Date();
   return {
     ticketNumber: genTicketNumber(route),
@@ -104,6 +105,7 @@ function buildTicket(route: string): Ticket {
     time: fmtTime(now),
     endTime: fmtTime(plusHour(now)),
     date: fmtDate(now),
+    boardNumber: boardNumber,
   };
 }
 
@@ -301,7 +303,8 @@ const TicketBubble = ({ ticket }: { ticket: Ticket }) => (
       {" pina la "}
       <span style={{ textDecoration: "underline" }}>{ticket.endTime}</span>
       {")"}<br />
-      {"Pret 7 MDL"}
+      {"Pret 7 MDL"}<br />
+      {"Numar de bord: "}<span style={{ textDecoration: "underline" }}>{ticket.boardNumber}</span>
     </div>
   </div>
 );
@@ -606,7 +609,7 @@ export default function TicketChat() {
       setTimeout(() => {
         pushMessage(chatId, {
           id: idRef.current++, kind: "ticket",
-          ticket: buildTicket(text), time: fmtTime(new Date()),
+          ticket: buildTicket(activeContact.id, text), time: fmtTime(new Date()),
         });
       }, 2400);
     }
