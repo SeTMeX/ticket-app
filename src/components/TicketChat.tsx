@@ -76,8 +76,8 @@ function injectStyles() {
   document.head.appendChild(tag);
 }
 
-function genTicketNumber(route: string): string {
-  return `${route}${Math.floor(1000 + Math.random() * 9000)}`;
+function genTicketNumber(prefix: string): string {
+  return `${prefix}${Math.floor(1000 + Math.random() * 9000)}`;
 }
 function fmtTime(d: Date): string {
   return d.toLocaleTimeString("ro-MD", { hour: "2-digit", minute: "2-digit", hour12: false });
@@ -100,7 +100,7 @@ function plusHour(d: Date): Date {
 function buildTicket(route: string, boardNumber: string): Ticket {
   const now = new Date();
   return {
-    ticketNumber: genTicketNumber(route),
+    ticketNumber: genTicketNumber(boardNumber),
     routeNumber: route,
     time: fmtTime(now),
     endTime: fmtTime(plusHour(now)),
